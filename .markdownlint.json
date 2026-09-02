@@ -1,0 +1,15 @@
+{
+  "MD022": {
+    "siblings_only": true
+  },
+  "MD031": {
+    "list_items": false
+  },
+  "MD032": {
+    "list_items": true
+  },
+  "MD058": false,
+  "MD060": {
+    "style": "extended"
+  }
+}

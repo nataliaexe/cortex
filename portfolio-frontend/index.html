@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Natalia — Full Stack Java Developer. High-performance portfolio with optimized rendering." />
+    <title>Natalia Vargas | Full Stack Java Developer</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+        }
+      }
+    </script>
+
+    <div id="cursor"></div>
+    <div id="vignette"></div>
+    <div id="scanlines"></div>
+
+    <div class="corner c-tl"></div>
+    <div class="corner c-tr"></div>
+    <div class="corner c-bl"></div>
+    <div class="corner c-br"></div>
+
+    <div id="ui-panel">
+      <div class="border-wrap">
+        <div class="glass-inner">
+          <div class="panel-header">
+            <div class="status-dot" id="status-dot"></div>
+            <span class="panel-id">NS-7A</span>
+          </div>
+          <div class="telemetry">
+            <div class="tele-row">
+              <span class="tele-label">Membrane V</span>
+              <span class="tele-val" id="tele-mv">−70.0 mV</span>
+            </div>
+            <div class="tele-row">
+              <span class="tele-label">Dendrites</span>
+              <span class="tele-val active" id="tele-dend">247</span>
+            </div>
+            <div class="tele-row">
+              <span class="tele-label">Propagation</span>
+              <span class="tele-val" id="tele-prop">STANDBY</span>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="bar-row">
+            <span class="bar-label">Signal</span>
+            <div class="bar-track"><div class="bar-fill bar-signal" id="bar-signal"></div></div>
+          </div>
+          <div class="bar-row axon-row">
+            <span class="bar-label">Axon</span>
+            <div class="bar-track"><div class="bar-fill bar-axon" id="bar-axon"></div></div>
+          </div>
+          <div class="divider"></div>
+          <div class="status-line idle" id="status-msg">▸ AWAITING STIMULUS</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="coords">
+      <span id="coord-x">X: 0.000</span>
+      <span id="coord-y">Y: 8.000</span>
+      <span id="coord-z">Z: 45.000</span>
+      <span class="coord-note">CAM · ORBIT MODE</span>
+    </div>
+
+    <header class="hero" id="hero">
+      <div id="hero-canvas" aria-hidden="true"></div>
+      <div class="hero-overlay">
+        <div class="hero-glass">
+          <p class="eyebrow">Portfolio · Full Stack Java</p>
+          <h1>Natalia</h1>
+          <h2>Full Stack Java Developer</h2>
+          <div class="hero-links">
+            <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="#contact">Contact</a>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-indicator">↓ view projects</div>
+    </header>
+
+    <main>
+      <section class="section about" id="about">
+        <div class="section-heading">
+          <p class="eyebrow">About Me</p>
+          <h3>Building resilient digital systems with Java, cloud, and design.</h3>
+        </div>
+        <div class="about-grid">
+          <p>
+            I am a developer focused on creating high-performance applications that blend backend architecture, clean APIs, and elegant user experiences. I enjoy turning complex ideas into reliable products for people and businesses.
+          </p>
+          <div class="stack-card">
+            <h4>Main Stack</h4>
+            <ul>
+              <li>☕ Java 17+</li>
+              <li>🌿 Spring Boot</li>
+              <li>🗄️ PostgreSQL</li>
+              <li>⚛️ React / Vanilla JS</li>
+              <li>☁️ Docker / AWS</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section projects" id="projects">
+        <div class="section-heading">
+          <p class="eyebrow">Projects</p>
+          <h3>Selected work that combines software engineering and visual impact.</h3>
+        </div>
+        <div class="project-grid">
+          <article class="project-card">
+            <img src="./assets/project-1.svg" alt="Project thumbnail" />
+            <div class="card-body">
+              <h4>Neural Command Center</h4>
+              <p>Live dashboard for monitoring telemetry and signal propagation.</p>
+              <div class="chip-row"><span>Java</span><span>Spring</span><span>React</span></div>
+              <div class="card-links">
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="https://example.com" target="_blank" rel="noopener noreferrer">Demo</a>
+              </div>
+            </div>
+          </article>
+          <article class="project-card">
+            <img src="./assets/project-2.svg" alt="Project thumbnail" />
+            <div class="card-body">
+              <h4>API Gateway Studio</h4>
+              <p>Secure gateway with layered services, audit logs, and admin workflows.</p>
+              <div class="chip-row"><span>Spring Boot</span><span>JWT</span><span>Postgres</span></div>
+              <div class="card-links">
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="https://example.com" target="_blank" rel="noopener noreferrer">Demo</a>
+              </div>
+            </div>
+          </article>
+          <article class="project-card">
+            <img src="./assets/project-3.svg" alt="Project thumbnail" />
+            <div class="card-body">
+              <h4>Immersive Portfolio</h4>
+              <p>An animated portfolio experience crafted for recruiters and modern teams.</p>
+              <div class="chip-row"><span>Three.js</span><span>CSS</span><span>Java</span></div>
+              <div class="card-links">
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="https://example.com" target="_blank" rel="noopener noreferrer">Demo</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section contact" id="contact">
+        <div class="section-heading">
+          <p class="eyebrow">Contact</p>
+          <h3>Let’s build something ambitious together.</h3>
+        </div>
+        <form id="contact-form" class="contact-form">
+          <label>
+            <span>Name</span>
+            <input type="text" name="name" required />
+          </label>
+          <label>
+            <span>Email</span>
+            <input type="email" name="email" required />
+          </label>
+          <label>
+            <span>Message</span>
+            <textarea name="message" rows="5" required></textarea>
+          </label>
+          <button type="submit">Send message</button>
+          <p id="form-status" class="form-status" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Built for Natalia</p>
+      <div class="footer-links">
+        <a href="#hero">Top</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </footer>
+
+    <script type="module" src="./js/animation.js"></script>
+    <script src="./js/main.js"></script>
+  </body>
+</html>
