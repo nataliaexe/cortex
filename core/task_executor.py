@@ -12,6 +12,9 @@ from typing import Dict, Any, Optional, List
 from pathlib import Path
 from datetime import datetime, timedelta
 
+from .capabilities import ComputerControl, InternetTools, NetworkTools
+from .governance import Governance
+
 
 class TaskExecutor:
     """Executor de tarefas e ações do sistema"""
@@ -19,6 +22,10 @@ class TaskExecutor:
     def __init__(self, config: Dict[str, Any]):
         self.logger = logging.getLogger(__name__)
         self.config = config
+        self.governance = Governance(config)
+        self.computer = ComputerControl(self.governance)
+        self.network = NetworkTools(config)
+        self.internet = InternetTools(config, self.governance)
         self.action_map = self._build_action_map()
         
     def _build_action_map(self) -> Dict[str, callable]:
@@ -99,6 +106,18 @@ class TaskExecutor:
             "shutdown": self.shutdown,
             "reboot": self.reboot,
             "sleep": self.sleep,
+            # Governed platform capabilities
+            "execute_command": self.execute_command,
+            "process_list": self.process_list,
+            "network_connections": self.network_connections,
+            "network_traffic": self.network_traffic,
+            "discover_local_devices": self.discover_local_devices,
+            "http_request": self.http_request,
+            "model_status": self.model_status,
+            "security_scan": self.security_scan,
+            "dependency_scan": self.dependency_scan,
+            "governance_status": self.governance_status,
+            "knowledge_search": self.knowledge_search,
         }
         
     async def initialize(self):
@@ -114,27 +133,26 @@ class TaskExecutor:
         
         if intent not in self.action_map:
             return f"Ação '{intent}' não implementada"
-            
+        decision = self.governance.authorize(intent, parameters, context)
+        self.governance.audit(intent, decision, params=parameters)
+        if not decision.allowed:
+            if decision.requires_confirmation:
+                return f"CONFIRMAÇÃO NECESSÁRIA: {decision.reason} Confirme incluindo '{intent}' em confirmed_actions."
+            return f"AÇÃO BLOQUEADA: {decision.reason}"
         try:
             action = self.action_map[intent]
             result = await action(parameters, context)
+            self.governance.audit(intent, decision, params=parameters, outcome="completed")
             return str(result)
         except Exception as e:
             self.logger.error(f"Erro ao executar {intent}: {e}")
+            self.governance.audit(intent, decision, params=parameters, outcome=f"failed: {type(e).__name__}")
             return f"Erro ao executar ação: {str(e)}"
     
     # Ações de sistema
     async def get_system_info(self, params: Dict, context: Dict) -> str:
         """Obtém informações do sistema"""
-        import platform
-        info = {
-            "sistema": platform.system(),
-            "versão": platform.version(),
-            "arquitetura": platform.machine(),
-            "processador": platform.processor(),
-            "hostname": platform.node()
-        }
-        return json.dumps(info, indent=2, ensure_ascii=False)
+        return json.dumps(self.computer.system_info(), indent=2, ensure_ascii=False)
         
     async def get_disk_usage(self, params: Dict, context: Dict) -> str:
         """Obtém uso de disco"""
@@ -175,8 +193,8 @@ class TaskExecutor:
         """Lista arquivos em um diretório"""
         path = params.get("path", ".")
         try:
-            files = list(Path(path).iterdir())
-            return "\n".join([f.name for f in files])
+            files = self.computer.list_directory(path)
+            return json.dumps(files, ensure_ascii=False, indent=2)
         except Exception as e:
             return f"Erro ao listar arquivos: {e}"
             
@@ -186,8 +204,7 @@ class TaskExecutor:
         if not path:
             return "Caminho do arquivo não especificado"
         try:
-            with open(path, 'r', encoding='utf-8') as f:
-                return f.read()
+            return self.computer.read_file(path)
         except Exception as e:
             return f"Erro ao ler arquivo: {e}"
             
@@ -198,9 +215,8 @@ class TaskExecutor:
         if not path:
             return "Caminho do arquivo não especificado"
         try:
-            with open(path, 'w', encoding='utf-8') as f:
-                f.write(content)
-            return f"Arquivo {path} escrito com sucesso"
+            result = self.computer.write_file(path, content)
+            return f"Arquivo {result['path']} escrito; backup: {result['backup'] or 'não aplicável'}"
         except Exception as e:
             return f"Erro ao escrever arquivo: {e}"
             
@@ -210,7 +226,7 @@ class TaskExecutor:
         if not path:
             return "Caminho do arquivo não especificado"
         try:
-            Path(path).unlink()
+            self.governance.ensure_path(path, must_exist=True).unlink()
             return f"Arquivo {path} deletado com sucesso"
         except Exception as e:
             return f"Erro ao deletar arquivo: {e}"
@@ -221,7 +237,7 @@ class TaskExecutor:
         if not path:
             return "Caminho do diretório não especificado"
         try:
-            Path(path).mkdir(parents=True, exist_ok=True)
+            self.governance.ensure_path(path).mkdir(parents=True, exist_ok=True)
             return f"Diretório {path} criado com sucesso"
         except Exception as e:
             return f"Erro ao criar diretório: {e}"
@@ -269,19 +285,8 @@ class TaskExecutor:
     async def scan_ports(self, params: Dict, context: Dict) -> str:
         """Escaneia portas abertas"""
         host = params.get("host", "127.0.0.1")
-        import socket
-        open_ports = []
-        for port in range(1, 1025):
-            try:
-                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                sock.settimeout(0.1)
-                result = sock.connect_ex((host, port))
-                if result == 0:
-                    open_ports.append(str(port))
-                sock.close()
-            except:
-                continue
-        return f"Portas abertas em {host}: {', '.join(open_ports) if open_ports else 'Nenhuma'}"
+        ports = params.get("ports", list(range(1, 129)))
+        return json.dumps(await self.network.port_scan(host, ports), ensure_ascii=False)
         
     async def scan_processes(self, params: Dict, context: Dict) -> str:
         """Escaneia processos suspeitos"""
@@ -378,8 +383,9 @@ class TaskExecutor:
     async def download_file(self, params: Dict, context: Dict) -> str:
         """Baixa arquivo"""
         url = params.get("url", "")
-        dest = params.get("destination", ".")
-        return f"Download de {url} para {dest} (implementação pendente)"
+        dest = params.get("destination", "downloads/download.bin")
+        result = await self.internet.download(url, dest, params.get("sha256"))
+        return json.dumps(result, ensure_ascii=False)
         
     # Ações de conhecimento
     async def neuroscience_query(self, params: Dict, context: Dict) -> str:
@@ -464,13 +470,13 @@ class TaskExecutor:
     # Ações de análise
     async def analyze_binary(self, params: Dict, context: Dict) -> str:
         """Analisa binário"""
-        path = params.get("path", "")
-        return f"Análise de binário: {path} (implementação pendente)"
+        from security.binary_analyzer import BinaryAnalyzer
+        return json.dumps(BinaryAnalyzer(self.config).analyze(params.get("path", "")), ensure_ascii=False, indent=2)
         
     async def analyze_dependencies(self, params: Dict, context: Dict) -> str:
         """Analisa dependências"""
-        path = params.get("path", ".")
-        return f"Análise de dependências em {path} (implementação pendente)"
+        from security.dependency_checker import DependencyChecker
+        return json.dumps(DependencyChecker(self.config).check_directory(params.get("path", ".")), ensure_ascii=False, indent=2)
         
     async def generate_report(self, params: Dict, context: Dict) -> str:
         """Gera relatório"""
@@ -519,6 +525,54 @@ class TaskExecutor:
             return result.stdout
         except Exception as e:
             return f"Erro ao consultar DNS: {e}"
+
+    # Plataforma governada
+    async def execute_command(self, params: Dict, context: Dict) -> str:
+        """Executa argv sem shell, dentro do workspace autorizado."""
+        command = params.get("command", [])
+        if isinstance(command, str):
+            return "Comandos em texto não são aceitos; informe uma lista de argumentos (argv)."
+        return json.dumps(self.computer.run_command(command, params.get("timeout", 30), params.get("cwd", ".")), ensure_ascii=False)
+
+    async def process_list(self, params: Dict, context: Dict) -> str:
+        return json.dumps(self.computer.processes(int(params.get("limit", 100))), ensure_ascii=False, default=str)
+
+    async def network_connections(self, params: Dict, context: Dict) -> str:
+        return json.dumps(self.network.connections(), ensure_ascii=False)
+
+    async def network_traffic(self, params: Dict, context: Dict) -> str:
+        return json.dumps(self.network.traffic_summary(), ensure_ascii=False)
+
+    async def discover_local_devices(self, params: Dict, context: Dict) -> str:
+        return json.dumps(self.network.discover_local_devices(), ensure_ascii=False)
+
+    async def http_request(self, params: Dict, context: Dict) -> str:
+        result = await self.internet.request(params.get("url", ""), params.get("method", "GET"))
+        return json.dumps(result, ensure_ascii=False)
+
+    async def security_scan(self, params: Dict, context: Dict) -> str:
+        from security.universal_scanner import UniversalScanner
+        path = self.governance.ensure_path(params.get("path", "."), must_exist=True)
+        scanner = UniversalScanner(self.config)
+        result = scanner.scan_directory(str(path)) if path.is_dir() else scanner.scan_file(str(path))
+        return json.dumps(result, ensure_ascii=False, indent=2)
+
+    async def dependency_scan(self, params: Dict, context: Dict) -> str:
+        from security.dependency_checker import DependencyChecker
+        path = self.governance.ensure_path(params.get("path", "."), must_exist=True)
+        return json.dumps(DependencyChecker(self.config).check_directory(str(path)), ensure_ascii=False, indent=2)
+
+    async def model_status(self, params: Dict, context: Dict) -> str:
+        from .local_llm import LocalLLM
+        client = LocalLLM(self.config)
+        return json.dumps(await client.model_status(), ensure_ascii=False, indent=2)
+
+    async def governance_status(self, params: Dict, context: Dict) -> str:
+        return json.dumps(self.governance.status(), ensure_ascii=False, indent=2)
+
+    async def knowledge_search(self, params: Dict, context: Dict) -> str:
+        from .knowledge_base import LocalKnowledgeBase
+        return json.dumps(LocalKnowledgeBase(self.config).search(params.get("query", ""), params.get("limit", 5)), ensure_ascii=False, indent=2)
             
     # Ações de sistema
     async def shutdown(self, params: Dict, context: Dict) -> str:

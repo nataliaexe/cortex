@@ -113,18 +113,34 @@ class CortexWebApp:
         @self.app.get("/api/security/scan")
         async def security_scan(path: str = "."):
             """Scan de segurança"""
+            from core.governance import Governance
             from security.universal_scanner import UniversalScanner
+            target = Governance(self.config).ensure_path(path, must_exist=True)
             scanner = UniversalScanner(self.config)
-            result = scanner.scan_directory(path)
+            result = scanner.scan_directory(str(target)) if target.is_dir() else scanner.scan_file(str(target))
             return result
             
         @self.app.get("/api/security/dependencies")
         async def dependency_check(path: str = "."):
             """Verificação de dependências"""
+            from core.governance import Governance
             from security.dependency_checker import DependencyChecker
+            target = Governance(self.config).ensure_path(path, must_exist=True)
             checker = DependencyChecker(self.config)
-            result = checker.check_directory(path)
+            result = checker.check_directory(str(target))
             return result
+
+        @self.app.get("/api/governance/status")
+        async def governance_status():
+            """Expõe a política ativa e o local do log de auditoria."""
+            from core.governance import Governance
+            return Governance(self.config).status()
+
+        @self.app.get("/api/models/status")
+        async def models_status():
+            """Verifica os modelos Ollama sem baixá-los."""
+            from core.local_llm import LocalLLM
+            return await LocalLLM(self.config).model_status()
             
         @self.app.get("/api/voice/status")
         async def voice_status():

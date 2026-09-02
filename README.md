@@ -219,6 +219,32 @@ docker-compose up -d
 - **Offline-first:** Sem APIs externas
 - **Privacidade:** Dados locais apenas
 
+### Governança de ferramentas
+
+As ferramentas do Córtex passam por uma política central em `core/governance.py`:
+
+- leituras e escritas são limitadas a `governance.allowed_paths`;
+- escrita, exclusão, comandos, execução de código, commits, downloads e controle de energia exigem confirmação explícita;
+- comandos aceitam somente `argv` (não `shell=True`) e ações perigosas são bloqueadas;
+- downloads ficam em quarentena lógica: são validados por tamanho/SHA-256 e nunca executados;
+- `logs/audit.jsonl` registra solicitação, decisão e resultado, com segredos mascarados.
+
+Para uma integração de UI/API, passe a confirmação no contexto da execução:
+
+```python
+await executor.execute_intent("write_file", {"path": "nota.txt", "content": "..."},
+                              {"confirmed_actions": ["write_file"]})
+```
+
+### Modelos locais
+
+O Córtex espera `deepseek-r1:7b` para raciocínio e `qwen2.5-coder:7b` para tarefas de código. Ele detecta ambos em `/api/models/status` ou pela ação `model_status`, mas nunca os baixa automaticamente. Após instalar o Ollama, baixe apenas os que desejar:
+
+```bash
+ollama pull deepseek-r1:7b
+ollama pull qwen2.5-coder:7b
+```
+
 ## 🧱 Roadmap Futuro
 
 | Prioridade | Funcionalidade |

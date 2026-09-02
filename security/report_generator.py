@@ -210,7 +210,7 @@ class ReportGenerator:
 
 """
                     else:
-                        markdown += f"- {dep['package']} ({dep['version'}): ✅ Sem vulnerabilidades\n\n"
+                        markdown += f"- {dep['package']} ({dep['version']}): ✅ Sem vulnerabilidades\n\n"
                         
         else:
             # Relatório de arquivo único

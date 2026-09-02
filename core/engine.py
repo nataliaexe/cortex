@@ -17,6 +17,7 @@ from .decision_protocol import DecisionProtocol
 from .situational_awareness import SituationalAwareness
 from .secure_storage import SecureStorage
 from .system_actions import SystemActions
+from .knowledge_base import LocalKnowledgeBase
 
 
 class CortexEngine:
@@ -34,6 +35,7 @@ class CortexEngine:
         self.situational_awareness = SituationalAwareness(self.config)
         self.secure_storage = SecureStorage(self.config)
         self.system_actions = SystemActions(self.config)
+        self.knowledge_base = LocalKnowledgeBase(self.config)
         
         self.running = False
         
@@ -54,6 +56,8 @@ class CortexEngine:
         # 1. Análise situacional
         context = context or {}
         context.update(await self.situational_awareness.analyze_context(user_input))
+        # Retrieved local facts are supplied to the LLM, never sent to a remote service.
+        context["knowledge_matches"] = self.knowledge_base.search(user_input, limit=3)
         
         # 2. Matching semântico
         semantic_result = await self.semantic_matcher.match(user_input)

@@ -82,6 +82,10 @@ class ConfigLoader:
                 "enabled": True,
                 "provider": "ollama",
                 "model": "deepseek-r1:7b",
+                "models": {
+                    "reasoning": "deepseek-r1:7b",
+                    "coding": "qwen2.5-coder:7b"
+                },
                 "api_url": "http://localhost:11434",
                 "timeout": 60,
                 "generation": {
@@ -141,5 +145,12 @@ class ConfigLoader:
                 "auto_evolution": False,
                 "sandbox": True,
                 "backup_before_changes": True
-            }
+            },
+            "governance": {
+                "allowed_paths": ["."],
+                "require_confirmation": True,
+                "audit_log": "logs/audit.jsonl"
+            },
+            "internet": {"enabled": False, "allowed_hosts": [], "max_download_bytes": 26214400},
+            "network": {"allow_public_targets": False, "max_port_scan": 128}
         }

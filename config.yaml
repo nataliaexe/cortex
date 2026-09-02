@@ -13,6 +13,10 @@ llm:
   enabled: true
   provider: "ollama"
   model: "deepseek-r1:7b"
+  # Modelos locais esperados; o Cortex não faz download automático.
+  models:
+    reasoning: "deepseek-r1:7b"
+    coding: "qwen2.5-coder:7b"
   api_url: "http://localhost:11434"
   timeout: 60
   generation:
@@ -36,6 +40,7 @@ voice:
     sensitivity: 0.5
 
 memory:
+  knowledge_base_path: "knowledge_base"
   short_term:
     type: "sqlite"
     path: "data/short_term.db"
@@ -111,3 +116,21 @@ privacy:
   data_retention_days: 90
   anonymize_logs: true
   encryption_at_rest: true
+
+# Governança central: toda ação passa por esta política e gera auditoria.
+governance:
+  allowed_paths:
+    - "."
+  require_confirmation: true
+  audit_log: "logs/audit.jsonl"
+
+# A internet permanece desligada por padrão. Autorize hosts específicos antes de usar HTTP/download.
+internet:
+  enabled: false
+  allowed_hosts: []
+  max_download_bytes: 26214400
+
+# Diagnósticos de rede só podem tocar alvos locais/privados por padrão.
+network:
+  allow_public_targets: false
+  max_port_scan: 128

@@ -4,6 +4,7 @@ Gênesis Córtex - Local LLM
 Cliente Ollama para DeepSeek-R1
 """
 
+import asyncio
 import logging
 import aiohttp
 import json
@@ -20,6 +21,10 @@ class LocalLLM:
         self.enabled = self.llm_config.get("enabled", False)
         self.api_url = self.llm_config.get("api_url", "http://localhost:11434")
         self.model = self.llm_config.get("model", "deepseek-r1:7b")
+        self.models = self.llm_config.get("models", {
+            "reasoning": "deepseek-r1:7b", "coding": "qwen2.5-coder:7b",
+        })
+        self.available_models: list[str] = []
         self.timeout = self.llm_config.get("timeout", 60)
         self.generation_config = self.llm_config.get("generation", {})
         
@@ -34,7 +39,12 @@ class LocalLLM:
             async with aiohttp.ClientSession() as session:
                 async with session.get(f"{self.api_url}/api/tags", timeout=5) as response:
                     if response.status == 200:
+                        payload = await response.json()
+                        self.available_models = [item.get("name", "") for item in payload.get("models", [])]
                         self.logger.info("Ollama está rodando e acessível")
+                        missing = [model for model in set(self.models.values()) if model not in self.available_models]
+                        if missing:
+                            self.logger.warning("Modelos configurados mas indisponíveis: %s", ", ".join(missing))
                     else:
                         self.logger.warning("Ollama não respondeu corretamente")
                         self.enabled = False
@@ -55,7 +65,7 @@ class LocalLLM:
             # Faz requisição para Ollama
             async with aiohttp.ClientSession() as session:
                 payload = {
-                    "model": self.model,
+                    "model": self._select_model(user_input, context),
                     "prompt": prompt,
                     "stream": False,
                     "options": {
@@ -107,6 +117,34 @@ Responda de forma direta, concisa e útil. Seja técnico quando apropriado."""
             context_str = "\nContexto atual:\n" + "\n".join(context_items)
             
         return f"{system_prompt}\n\n{context_str}\n\nUsuário: {user_input}\n\nAssistente:"
+
+    def _select_model(self, user_input: str, context: Dict[str, Any]) -> str:
+        """Prefere Qwen para tarefas de código quando ele estiver instalado."""
+        requested = context.get("model")
+        if requested in self.available_models:
+            return requested
+        code_words = ("código", "code", "python", "javascript", "teste", "bug", "git", "refator")
+        coding = self.models.get("coding", "qwen2.5-coder:7b")
+        if any(word in user_input.lower() for word in code_words) and coding in self.available_models:
+            return coding
+        reasoning = self.models.get("reasoning", self.model)
+        return reasoning if reasoning in self.available_models else self.model
+
+    async def model_status(self) -> Dict[str, Any]:
+        """Reports model availability without downloading or starting a model."""
+        expected = sorted(set([self.model, *self.models.values()]))
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(f"{self.api_url}/api/tags", timeout=5) as response:
+                    if response.status != 200:
+                        return {"ollama_available": False, "expected": expected, "available": []}
+                    data = await response.json()
+                    available = [item.get("name", "") for item in data.get("models", [])]
+                    self.available_models = available
+                    return {"ollama_available": True, "expected": expected, "available": available,
+                            "missing": [name for name in expected if name not in available]}
+        except (aiohttp.ClientError, asyncio.TimeoutError, OSError) as error:
+            return {"ollama_available": False, "expected": expected, "available": [], "error": str(error)}
         
     def _strip_deepseek_thinking(self, text: str) -> str:
         """Remove bloco de thinking do DeepSeek"""
