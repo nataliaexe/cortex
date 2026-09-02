@@ -1,0 +1,73 @@
+# Java/Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+# Python (seu projeto Córtex)
+__pycache__/
+*.py[cod]
+*.so
+.Python
+env/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Modelos ML e dados
+*.bin
+*.model
+*.pkl
+*.h5
+*.onnx
+models/
+checkpoints/
+weights/
+vosk-model*/
+piper-voices/
+
+# Áudio
+*.wav
+*.mp3
+
+# Dados
+*.db
+*.sqlite
+data/
+datasets/
+
+# Logs e cache
+*.log
+.cache/
+*.cache
+
+# Arquivos grandes
+*.zip
+*.rar
+*.tar.gz
+
+# Sistema
+.DS_Store
+Thumbs.db 
