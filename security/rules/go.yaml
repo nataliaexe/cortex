@@ -1,0 +1,229 @@
+# Regras de segurança para Go
+# Baseado em OWASP e best practices
+
+go_exec_command:
+  type: command_injection
+  severity: high
+  description: "exec.Command pode permitir command injection"
+  patterns:
+    - "exec\\.Command"
+  remediation: "Valide e sanitize todos os inputs"
+
+go_exec_command_shell:
+  type: command_injection
+  severity: critical
+  description: "exec.Command com shell pode permitir command injection"
+  patterns:
+    - "exec\\.Command\\(.*sh"
+    - "exec\\.Command\\(.*bash"
+  remediation: "Evite shell, use comandos diretos com argumentos separados"
+
+go_sql_concat:
+  type: sql_injection
+  severity: critical
+  description: "SQL usando concatenação de strings é vulnerável a SQL injection"
+  patterns:
+    - "SELECT.*\\+.*FROM"
+    - "INSERT.*\\+.*INTO"
+    - "UPDATE.*\\+.*SET"
+    - "DELETE.*\\+.*FROM"
+  remediation: "Use parameterized queries com database/sql"
+
+go_sql_fmt:
+  type: sql_injection
+  severity: critical
+  description: "SQL usando fmt.Sprintf é vulnerável a SQL injection"
+  patterns:
+    - "fmt\\.Sprintf.*SELECT"
+    - "fmt\\.Sprintf.*INSERT"
+    - "fmt\\.Sprintf.*UPDATE"
+    - "fmt\\.Sprintf.*DELETE"
+  remediation: "Use parameterized queries com database/sql"
+
+go_hardcoded_secrets:
+  type: hardcoded_secrets
+  severity: high
+  description: "Segredos hardcoded no código"
+  patterns:
+    - "password.*=.*['\"]"
+    - "secret.*=.*['\"]"
+    - "api_key.*=.*['\"]"
+    - "token.*=.*['\"]"
+  remediation: "Use variáveis de ambiente ou arquivo de configuração"
+
+go_weak_random:
+  type: weak_cryptography
+  severity: medium
+  description: "math/rand não é criptograficamente seguro"
+  patterns:
+    - "math/rand"
+    - "rand\\.Seed"
+  remediation: "Use crypto/rand para operações criptográficas"
+
+go_weak_hash:
+  type: weak_hash
+  severity: medium
+  description: "Algoritmos de hash fracos"
+  patterns:
+    - "md5"
+    - "sha1"
+  remediation: "Use SHA-256 ou stronger (crypto/sha256)"
+
+go_weak_crypto:
+  type: weak_cryptography
+  severity: high
+  description: "Algoritmos criptográficos fracos"
+  patterns:
+    - "des\\."
+    - "rc4\\."
+    - "md5\\."
+  remediation: "Use algoritmos modernos como AES-GCM, ChaCha20-Poly1305"
+
+go_insecure_tls:
+  type: weak_ssl
+  severity: high
+  description: "Configuração TLS insegura"
+  patterns:
+    - "InsecureSkipVerify.*true"
+  remediation: "Nunca use InsecureSkipVerify em produção"
+
+go_http_basic_auth:
+  type: weak_authentication
+  severity: medium
+  description: "HTTP Basic Auth não é seguro"
+  patterns:
+    - "BasicAuth"
+  remediation: "Use tokens ou OAuth2"
+
+go_sql_null_injection:
+  type: sql_injection
+  severity: high
+  description: "SQL.Null* com input não validado pode causar injection"
+  patterns:
+    - "sql\\.Null"
+  remediation: "Valide input antes de usar com SQL"
+
+go_template_xss:
+  type: xss
+  severity: high
+  description: "Templates Go podem ser vulneráveis a XSS se não sanitizados"
+  patterns:
+    - "template\\.Execute"
+  remediation: "Use context autoescaping ou sanitize input"
+
+go ioutil_read_file:
+  type: path_traversal
+  severity: medium
+  description: "ioutil.ReadFile com input do usuário pode causar path traversal"
+  patterns:
+    - "ioutil\\.ReadFile"
+  remediation: "Valide e normalize paths antes de usar"
+
+go_os_open:
+  type: path_traversal
+  severity: medium
+  description: "os.Open com input do usuário pode causar path traversal"
+  patterns:
+    - "os\\.Open"
+  remediation: "Valide e normalize paths antes de usar"
+
+go_race_condition:
+  type: race_condition
+  severity: medium
+  description: "Possível race condition em código concorrente"
+  patterns:
+    - "go\\s+func"
+    - "go\\s+\\w+\\("
+  remediation: "Use mutexes, channels, ou atomic operations"
+
+go_panic:
+  type: error_handling
+  severity: low
+  description: "panic pode causar crash da aplicação"
+  patterns:
+    - "panic\\("
+  remediation: "Use error handling adequado em vez de panic"
+
+go_defer_panic:
+  type: error_handling
+  severity: low
+  description: "defer com recover para tratar panics"
+  patterns:
+    - "defer\\s+func\\(\\)"
+  remediation: "Use error handling adequado em vez de panic/recover"
+
+go_json_unmarshal:
+  type: dangerous_deserialization
+  severity: medium
+  description: "json.Unmarshal com input não validado pode causar problemas"
+  patterns:
+    - "json\\.Unmarshal"
+  remediation: "Valide input antes de deserializar"
+
+go_xml_unmarshal:
+  type: dangerous_deserialization
+  severity: high
+  description: "xml.Unmarshal pode executar código arbitrário (XXE)"
+  patterns:
+    - "xml\\.Unmarshal"
+  remediation: "Valide input e desabilite entidades externas"
+
+go_log_sensitive:
+  type: information_disclosure
+  severity: medium
+  description: "Logging de dados sensíveis"
+  patterns:
+    - "log\\.Print.*password"
+    - "log\\.Print.*token"
+    - "log\\.Print.*secret"
+  remediation: "Nunca logue dados sensíveis"
+
+go_debug_mode:
+  type: debug_mode
+  severity: low
+  description: "Debug mode em produção pode expor informações"
+  patterns:
+    - "debug.*=.*true"
+  remediation: "Use variáveis de ambiente para configuração de debug"
+
+go_context_timeout:
+  type: resource_exhaustion
+  severity: medium
+  description: "Operações sem timeout podem causar resource exhaustion"
+  patterns:
+    - "http\\.Get"
+    - "http\\.Post"
+  remediation: "Use context com timeout para operações de rede"
+
+go_sql_prepare:
+  type: sql_injection
+  severity: medium
+  description: "SQL sem prepared statements"
+  patterns:
+    - "db\\.Query\\("
+    - "db\\.Exec\\("
+  remediation: "Use prepared statements (db.Prepare ou db.QueryContext)"
+
+go_goroutine_leak:
+  type: resource_leak
+  severity: medium
+  description: "Goroutines sem cleanup podem causar leaks"
+  patterns:
+    - "go\\s+func"
+  remediation: "Use context ou canais para cancelar goroutines"
+
+go_slice_bounds:
+  type: panic
+  severity: low
+  description: "Acesso a slice sem verificação de bounds pode causar panic"
+  patterns:
+    - "\\[\\d+\\]"
+  remediation: "Verifique bounds do slice antes de acessar"
+
+go_nil_dereference:
+  type: null_pointer
+  severity: medium
+  description: "Possível nil pointer dereference"
+  patterns:
+    - "\\."
+  remediation: "Verifique se pointer não é nil antes de usar"

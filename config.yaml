@@ -1,0 +1,113 @@
+# Gênesis Córtex - Configuração Principal
+# Arquivo de configuração do sistema
+
+system:
+  name: "Gênesis Córtex"
+  version: "1.0.0"
+  log_level: "INFO"
+  data_dir: "data"
+  log_dir: "logs"
+  timezone: "America/Sao_Paulo"
+
+llm:
+  enabled: true
+  provider: "ollama"
+  model: "deepseek-r1:7b"
+  api_url: "http://localhost:11434"
+  timeout: 60
+  generation:
+    temperature: 0.7
+    top_p: 0.9
+    max_tokens: 500
+
+voice:
+  enabled: false
+  stt:
+    provider: "vosk"
+    model: "pt-BR"
+    sample_rate: 16000
+  tts:
+    provider: "piper"
+    voice: "luciana"
+    sample_rate: 22050
+  wake_word:
+    enabled: false
+    phrase: "ei córtex"
+    sensitivity: 0.5
+
+memory:
+  short_term:
+    type: "sqlite"
+    path: "data/short_term.db"
+    max_entries: 1000
+  long_term:
+    type: "lancedb"
+    path: "data/long_term"
+    embedding_model: "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+
+security:
+  encryption:
+    enabled: true
+    algorithm: "AES-256-GCM"
+  scanner:
+    enabled: true
+    rules_path: "security/rules"
+  binary_analysis:
+    enabled: true
+  dependency_check:
+    enabled: true
+    osv_cache_dir: "data/osv_cache"
+
+web:
+  enabled: true
+  host: "127.0.0.1"
+  port: 8000
+  debug: false
+
+self_modification:
+  enabled: true
+  auto_evolution: false
+  sandbox: true
+  backup_before_changes: true
+  evolution_interval: 3600
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/cortex.log"
+  max_bytes: 10485760
+  backup_count: 5
+
+features:
+  # Features avançadas de segurança
+  process_analysis: true
+  port_scanning: true
+  network_analysis: true
+  log_analysis: true
+  
+  # Features de IA
+  semantic_matching: true
+  llm_fallback: true
+  context_awareness: true
+  
+  # Features de sistema
+  system_actions: true
+  file_operations: true
+  process_management: true
+  
+  # Features de desenvolvimento
+  code_execution: true
+  git_integration: true
+  docker_integration: true
+
+performance:
+  max_concurrent_requests: 10
+  request_timeout: 30
+  cache_enabled: true
+  cache_ttl: 3600
+
+privacy:
+  offline_mode: true
+  data_retention_days: 90
+  anonymize_logs: true
+  encryption_at_rest: true

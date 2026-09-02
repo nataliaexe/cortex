@@ -1,0 +1,137 @@
+{
+  "functional_neuroanatomy": {
+    "cortical_areas": {
+      "brodmann_areas": {
+        "1-3": {
+          "name": "Área somatossensorial primária",
+          "function": "Processamento tátil e proprioceptivo",
+          "location": "Lobo parietal, pós-central gyrus"
+        },
+        "4": {
+          "name": "Área motora primária",
+          "function": "Controle motor voluntário",
+          "location": "Lobo frontal, pré-central gyrus"
+        },
+        "17": {
+          "name": "Área visual primária (V1)",
+          "function": "Processamento visual básico",
+          "location": "Lobo occipital"
+        },
+        "41-42": {
+          "name": "Área auditiva primária",
+          "function": "Processamento auditivo básico",
+          "location": "Lobo temporal"
+        },
+        "44-45": {
+          "name": "Área de Broca",
+          "function": "Produção da fala",
+          "location": "Lobo frontal inferior"
+        },
+        "22": {
+          "name": "Área de Wernicke",
+          "function": "Compreensão da linguagem",
+          "location": "Lobo temporal superior"
+        }
+      },
+      "functional_networks": {
+        "default_mode_network": {
+          "regions": ["Precuneus", "Posterior cingulate", "Medial prefrontal"],
+          "function": "Atividade em repouso, autorreflexão",
+          "relevance": "Alterações em depressão e Alzheimer"
+        },
+        "salience_network": {
+          "regions": ["Anterior insula", "Dorsal anterior cingulate"],
+          "function": "Detecção de estímulos relevantes",
+          "relevance": "Alterações em ansiedade e psicose"
+        },
+        "central_executive_network": {
+          "regions": ["Dorsolateral prefrontal", "Posterior parietal"],
+          "function": "Controle executivo, atenção",
+          "relevance": "Alterações em TDAH e esquizofrenia"
+        }
+      }
+    },
+    "neurotransmitters": {
+      "dopamine": {
+        "pathways": ["mesolimbic", "mesocortical", "nigrostriatal", "tuberoinfundibular"],
+        "functions": ["recompensa", "motivação", "controle motor", "função endócrina"],
+        "disorders": ["Parkinson", "esquizofrenia", "TDAH", "dependência"],
+        "medications": ["levodopa", "antipsicóticos", "estimulantes"]
+      },
+      "serotonin": {
+        "pathways": ["raphe nuclei"],
+        "functions": ["humor", "sono", "apetite", "cognição"],
+        "disorders": ["depressão", "ansiedade", "OCD", "transtorno bipolar"],
+        "medications": ["ISRS", "ISRSN", "MAOIs"]
+      },
+      "gaba": {
+        "function": "inibição principal do SNC",
+        "receptors": ["GABA-A", "GABA-B"],
+        "disorders": ["ansiedade", "epilepsia", "insônia"],
+        "medications": ["benzodiazepínicos", "barbitúricos", "alcohol"]
+      },
+      "glutamate": {
+        "function": "excitação principal do SNC",
+        "receptors": ["NMDA", "AMPA", "kainate"],
+        "disorders": ["esquizofrenia", "depressão", "neurodegeneração"],
+        "medications": ["ketamina", "lamotrigina", "memantina"]
+      }
+    },
+    "eeg_patterns": {
+      "normal_patterns": {
+        "alpha": {
+          "frequency": "8-13 Hz",
+          "location": "occipital",
+          "state": "relaxado, olhos fechados"
+        },
+        "beta": {
+          "frequency": "13-30 Hz",
+          "location": "frontal",
+          "state": "alerta, pensamento ativo"
+        },
+        "theta": {
+          "frequency": "4-8 Hz",
+          "location": "temporal",
+          "state": "sonolência, meditação"
+        },
+        "delta": {
+          "frequency": "0.5-4 Hz",
+          "location": "difuso",
+          "state": "sono profundo"
+        }
+      },
+      "abnormal_patterns": {
+        "epilepsy": {
+          "spike_and_wave": "atividade epileptiforme característica",
+          "focal": "atividade restrita a uma área",
+          "generalized": "atividade bilateral síncrona"
+        },
+        "encephalopathy": {
+          "slow_waves": "atividade delta/theta difusa",
+          "triphasic_waves": "característico de encefalopatia metabólica"
+        },
+        "dementia": {
+          "slowing": "desaceleração geral do EEG",
+          "reduced_alpha": "diminuição da atividade alfa"
+        }
+      }
+    },
+    "bipolar_disorder": {
+      "neurobiology": {
+        "circadian_rhythms": "Alterações nos ritmos circadianos",
+        "neuroplasticity": "Redução da neuroplasticidade",
+        "neurotransmission": "Desequilíbrio dopaminérgico e serotoninérgico",
+        "hpa_axis": "Disregulação do eixo HPA"
+      },
+      "medications": {
+        "mood_stabilizers": ["lithium", "valproate", "lamotrigine"],
+        "antipsychotics": ["quetiapine", "olanzapine", "risperidone"],
+        "antidepressants": ["uso cauteloso em bipolar I"]
+      },
+      "neuroimaging": {
+        "structural": ["alterações volumétricas em amígdala e hipocampo"],
+        "functional": ["alterações em redes default mode e fronto-límbicas"]
+      }
+    }
+  }
+}

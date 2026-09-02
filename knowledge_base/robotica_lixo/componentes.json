@@ -1,0 +1,232 @@
+{
+  "robotica_lixo": {
+    "power_supplies": {
+      "atx_power_supplies": {
+        "description": "Fontes de alimentação de computador",
+        "voltages": {
+          "3.3V": "Logic power, 20-30A",
+          "5V": "Logic power, 20-30A",
+          "12V": "Motor power, 15-20A",
+          "-12V": "Legacy, 0.5-1A"
+        },
+        "wiring": {
+          "yellow": "+12V",
+          "red": "+5V",
+          "orange": "+3.3V",
+          "black": "GND",
+          "blue": "-12V",
+          "green": "PS_ON (power on)",
+          "gray": "PWR_OK (power good)"
+        },
+        "activation": "Short PS_ON to GND to turn on",
+        "safety": "Never open when powered, capacitors hold charge"
+      },
+      "laptop_chargers": {
+        "description": "Adaptadores de notebook",
+        "typical_voltages": ["19V", "20V"],
+        "current": "3-5A",
+        "uses": ["robot power", "battery charging", "motor drivers"]
+      },
+      "phone_chargers": {
+        "description": "Carregadores de celular",
+        "voltages": ["5V", "9V", "12V (Quick Charge)"],
+        "current": "1-3A",
+        "uses": ["low power electronics", "sensors", "microcontrollers"]
+      }
+    },
+    "motors": {
+      "dc_motors": {
+        "source": "Printers, toys, cooling fans",
+        "characteristics": {
+          "voltage": "3-24V",
+          "current": "0.1-5A",
+          "rpm": "1000-10000"
+        },
+        "control": "H-bridge required for direction",
+        "uses": ["wheels", "arms", "conveyors"]
+      },
+      "stepper_motors": {
+        "source": "Printers, scanners, CNC machines",
+        "characteristics": {
+          "steps_per_rev": "200-400",
+          "voltage": "5-24V",
+          "current": "0.5-3A"
+        },
+        "control": "Step/driver required",
+        "uses": ["precision positioning", "CNC", "3D printers"]
+      },
+      "servo_motors": {
+        "source": "RC toys, electronics",
+        "characteristics": {
+          "voltage": "4.8-6V",
+          "pulse": "1-2ms",
+          "angle": "0-180 degrees"
+        },
+        "control": "PWM signal",
+        "uses": ["robotic arms", "grippers", "pan-tilt"]
+      },
+      "brushless_motors": {
+        "source": "Drones, power tools, cooling fans",
+        "characteristics": {
+          "voltage": "6-48V",
+          "kv_rating": "100-3000",
+          "power": "50-1000W"
+        },
+        "control": "ESC required",
+        "uses": ["drones", "high speed applications"]
+      }
+    },
+    "sensors": {
+      "optical": {
+        "source": ["Printers", "scanners", "optical mice"],
+        "types": {
+          "ir_sensors": "Obstacle detection, line following",
+          "photodiodes": "Light detection",
+          "encoders": "Position/rotation feedback"
+        }
+      },
+      "mechanical": {
+        "source": ["Printers", "appliances", "electronics"],
+        "types": {
+          "limit_switches": "Position sensing",
+          "pressure_sensors": "Force detection",
+          "accelerometers": "Motion detection"
+        }
+      },
+      "temperature": {
+        "source": ["Computers", "appliances", "electronics"],
+        "types": {
+          "thermistors": "Temperature measurement",
+          "thermocouples": "High temperature sensing"
+        }
+      },
+      "magnetic": {
+        "source": ["Hard drives", "sensors", "electronics"],
+        "types": {
+          "hall_effect": "Position/rotation",
+          "reed_switches": "Proximity detection"
+        }
+      }
+    },
+    "controllers": {
+      "microcontrollers": {
+        "arduino": {
+          "source": "Arduino boards, development boards",
+          "specifications": {
+            "clock": "16MHz",
+            "flash": "32KB",
+            "ram": "2KB",
+            "io": "20 pins"
+          },
+          "programming": "Arduino IDE, C++"
+        },
+        "esp32": {
+          "source": "Development boards, IoT devices",
+          "specifications": {
+            "clock": "240MHz",
+            "flash": "4MB+",
+            "ram": "520KB",
+            "connectivity": "WiFi, Bluetooth"
+          },
+          "programming": "Arduino IDE, MicroPython"
+        },
+        "stm32": {
+          "source": "Development boards, industrial electronics",
+          "specifications": {
+            "clock": "72-216MHz",
+            "flash": "64-512KB",
+            "ram": "20-128KB",
+            "peripherals": "Extensive"
+          },
+          "programming": "STM32Cube, C/C++"
+        }
+      },
+      "single_board_computers": {
+        "raspberry_pi": {
+          "models": ["Pi 3B+", "Pi 4", "Pi Zero"],
+          "uses": ["computer vision", "complex control", "web interface"]
+        },
+        "jetson": {
+          "models": ["Nano", "TX2", "Xavier"],
+          "uses": ["AI inference", "computer vision", "robotics"]
+        }
+      }
+    },
+    "drivers": {
+      "motor_drivers": {
+        "l298n": {
+          "description": "Dual H-bridge driver",
+          "voltage": "5-35V",
+          "current": "2A per channel",
+          "uses": ["DC motors", "steppers"]
+        },
+        "tb6612fng": {
+          "description": "Dual H-bridge driver",
+          "voltage": "2.5-13.5V",
+          "current": "1.2A per channel",
+          "uses": ["Small DC motors"]
+        },
+        "a4988": {
+          "description": "Stepper motor driver",
+          "voltage": "8-35V",
+          "current": "1A",
+          "uses": ["Stepper motors"]
+        }
+      },
+      "power_regulation": {
+        "lm7805": {
+          "description": "5V linear regulator",
+          "input": "7-25V",
+          "output": "5V",
+          "current": "1A"
+        },
+        "lm2596": {
+          "description": "Buck converter",
+          "input": "4-40V",
+          "output": "1.2-35V",
+          "current": "3A"
+        },
+        "xl4015": {
+          "description": "Buck converter",
+          "input": "5-36V",
+          "output": "1.25-32V",
+          "current": "5A"
+        }
+      }
+    },
+    "mechanical": {
+      "gears": {
+        "source": ["Printers", "toys", "appliances"],
+        "types": ["spur", "planetary", "worm"],
+        "uses": ["speed reduction", "torque multiplication"]
+      },
+      "belts": {
+        "source": ["Printers", "scanners", "appliances"],
+        "types": ["timing", "flat", "V-belt"],
+        "uses": ["power transmission", "linear motion"]
+      },
+      "linear_motion": {
+        "source": ["Printers", "scanners", "CNC"],
+        "types": ["lead screw", "belt drive", "rack and pinion"],
+        "uses": ["CNC", "3D printing", "positioning"]
+      }
+    },
+    "safety": {
+      "electrical": {
+        "isolation": "Use optocouplers for high voltage separation",
+        "fusing": "Always include fuses on power inputs",
+        "polarity": "Double-check voltage polarity before connection"
+      },
+      "mechanical": {
+        "guarding": "Cover moving parts",
+        "limit_switches": "Include end-stop protection",
+        "emergency_stop": "Always include emergency stop button"
+      },
+      "thermal": {
+        "heat_sinks": "Use heat sinks on power electronics",
+        "ventilation": "Ensure adequate cooling",
+        "temperature_monitoring": "Monitor motor and driver temperatures"
+      }
+    }
+  }
+}

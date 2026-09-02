@@ -1,0 +1,253 @@
+# Regras de segurança para Rust
+# Baseado em OWASP e Rust security best practices
+
+rust_unsafe:
+  type: unsafe_code
+  severity: medium
+  description: "Código unsafe requer validação manual"
+  patterns:
+    - "unsafe\\s+\\{"
+    - "unsafe\\s+fn"
+  remediation: "Minimize uso de unsafe e documente thoroughly"
+
+rust_unwrap:
+  type: panic_risk
+  severity: low
+  description: "unwrap pode causar panic"
+  patterns:
+    - "\\.unwrap\\(\\)"
+  remediation: "Use expect com mensagem ou pattern matching"
+
+rust_expect:
+  type: panic_risk
+  severity: low
+  description: "expect pode causar panic"
+  patterns:
+    - "\\.expect\\(\\)"
+  remediation: "Use pattern matching ou ? operator"
+
+rust_panic:
+  type: panic_risk
+  severity: low
+  description: "panic! pode causar crash da aplicação"
+  patterns:
+    - "panic!"
+  remediation: "Use Result<T, E> para error handling"
+
+rust_unreachable:
+  type: panic_risk
+  severity: low
+  description: "unreachable! pode causar panic"
+  patterns:
+    - "unreachable!"
+  remediation: "Use pattern matching exaustivo"
+
+rust_raw_pointer:
+  type: memory_safety
+  severity: medium
+  description: "Raw pointers podem causar memory safety issues"
+  patterns:
+    - "\\*\\s+const\\s+\\w+"
+    - "\\*\\s+mut\\s+\\w+"
+  remediation: "Use referências ou smart pointers quando possível"
+
+rust_transmute:
+  type: type_safety
+  severity: high
+  description: "transmute pode causar undefined behavior"
+  patterns:
+    - "std::mem::transmute"
+  remediation: "Evite transmute, use alternativas mais seguras"
+
+rust_static_mut:
+  type: thread_safety
+  severity: high
+  description: "static mut pode causar data races"
+  patterns:
+    - "static\\s+mut"
+  remediation: "Use Mutex<RwLock<T>> ou atomic types"
+
+rust_raw_slice:
+  type: memory_safety
+  severity: medium
+  description: "Raw slices podem causar memory safety issues"
+  patterns:
+    - "\\[\\w+\\]"
+  remediation: "Use &[T] ou &mut [T] quando possível"
+
+rust_box_leak:
+  type: memory_leak
+  severity: medium
+  description: "Box::leak pode causar memory leak"
+  patterns:
+    - "Box::leak"
+  remediation: "Use apenas quando necessário e documente cleanup"
+
+rust_manually_drop:
+  type: memory_safety
+  severity: high
+  description: "ManuallyDrop pode causar memory safety issues"
+  patterns:
+    - "std::mem::ManuallyDrop"
+  remediation: "Use apenas quando necessário e documente thoroughly"
+
+rust_hardcoded_secrets:
+  type: hardcoded_secrets
+  severity: high
+  description: "Segredos hardcoded no código"
+  patterns:
+    - "password.*=.*['\"]"
+    - "secret.*=.*['\"]"
+    - "api_key.*=.*['\"]"
+    - "token.*=.*['\"]"
+  remediation: "Use variáveis de ambiente ou arquivo de configuração"
+
+rust_weak_random:
+  type: weak_cryptography
+  severity: medium
+  description: "rand não é criptograficamente seguro por padrão"
+  patterns:
+    - "use rand::"
+  remediation: "Use rand::rngs::OsRng para operações criptográficas"
+
+rust_weak_hash:
+  type: weak_hash
+  severity: medium
+  description: "Algoritmos de hash fracos"
+  patterns:
+    - "md5"
+    - "sha1"
+  remediation: "Use SHA-256 ou stronger (sha2::Sha256)"
+
+rust_weak_crypto:
+  type: weak_cryptography
+  severity: high
+  description: "Algoritmos criptográficos fracos"
+  patterns:
+    - "des::"
+    - "rc4::"
+  remediation: "Use algoritmos modernos como AES-GCM, ChaCha20-Poly1305"
+
+rust_sql_concat:
+  type: sql_injection
+  severity: critical
+  description: "SQL usando concatenação de strings é vulnerável a SQL injection"
+  patterns:
+    - "SELECT.*\\.to_string\\(\\)"
+    - "INSERT.*\\.to_string\\(\\)"
+  remediation: "Use parameterized queries"
+
+rust_command_injection:
+  type: command_injection
+  severity: high
+  description: "Comandos shell com input do usuário podem causar injection"
+  patterns:
+    - "std::process::Command"
+  remediation: "Valide e sanitize todos os inputs"
+
+rust_template_xss:
+  type: xss
+  severity: high
+  description: "Templates podem ser vulneráveis a XSS se não sanitizados"
+  patterns:
+    - "Template::new"
+  remediation: "Use templates com autoescaping ou sanitize input"
+
+rust_env_var:
+  type: path_traversal
+  severity: medium
+  description: "env var com input do usuário pode causar path traversal"
+  patterns:
+    - "std::env::var"
+  remediation: "Valide e normalize paths antes de usar"
+
+rust_file_open:
+  type: path_traversal
+  severity: medium
+  description: "File::open com input do usuário pode causar path traversal"
+  patterns:
+    - "File::open"
+  remediation: "Valide e normalize paths antes de usar"
+
+rust_http_insecure:
+  type: insecure_protocol
+  severity: medium
+  description: "Uso de HTTP em vez de HTTPS"
+  patterns:
+    - "http://"
+  remediation: "Use HTTPS em produção"
+
+rust_log_sensitive:
+  type: information_disclosure
+  severity: medium
+  description: "Logging de dados sensíveis"
+  patterns:
+    - "info!.*password"
+    - "info!.*token"
+    - "info!.*secret"
+  remediation: "Nunca logue dados sensíveis"
+
+rust_debug_assertions:
+  type: debug_mode
+  severity: low
+  description: "debug_assertions podem causar panic em debug builds"
+  patterns:
+    - "debug_assert!"
+  remediation: "Use apenas para verificação de invariants"
+
+rust_index_unchecked:
+  type: memory_safety
+  severity: high
+  description: "get_unchecked pode causar undefined behavior"
+  patterns:
+    - "get_unchecked"
+  remediation: "Use get() com bounds checking"
+
+rust_slice_unchecked:
+  type: memory_safety
+  severity: high
+  description: "get_unchecked_mut pode causar undefined behavior"
+  patterns:
+    - "get_unchecked_mut"
+  remediation: "Use get_mut() com bounds checking"
+
+rust_string_from_utf8_unchecked:
+  type: memory_safety
+  severity: high
+  description: "from_utf8_unchecked pode causar undefined behavior"
+  patterns:
+    - "from_utf8_unchecked"
+  remediation: "Use from_utf8() com validação"
+
+rust_copy_non_copy:
+  type: memory_safety
+  severity: medium
+  description: "Copy em tipos que não implementam Copy pode causar issues"
+  patterns:
+    - "\\.clone\\(\\)"
+  remediation: "Verifique se tipo implementa Copy antes de copiar"
+
+rust_arc_mutex:
+  type: thread_safety
+  severity: low
+  description: "Arc<Mutex<T>> pode causar deadlocks se usado incorretamente"
+  patterns:
+    - "Arc<Mutex<"
+  remediation: "Tenha cuidado com lock ordering e escopo de locks"
+
+rust_rwlock:
+  type: thread_safety
+  severity: low
+  description: "RwLock pode causar starvation se usado incorretamente"
+  patterns:
+    - "RwLock<"
+  remediation: "Tenha cuidado com lock ordering e duração de locks"
+
+rust_send_sync:
+  type: thread_safety
+  severity: low
+  description: "Manual implementação de Send/Sync pode causar data races"
+  patterns:
+    - "unsafe impl Send"
+    - "unsafe impl Sync"
+  remediation: "Documente thoroughly e teste extensivamente"

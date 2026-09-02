@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gênesis Córtex - Dashboard</title>
+    <meta name="description" content="Assistente Pessoal Offline">
+    <meta name="theme-color" content="#1a1a2e">
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Gênesis Córtex</h1>
+            <div class="status-indicator">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Conectando...</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="chat-section">
+                <div class="chat-container" id="chatContainer">
+                    <div class="message system">
+                        <div class="message-content">
+                            <p>Olá! Sou o Córtex, seu assistente pessoal offline. Como posso ajudar hoje?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-section">
+                    <div class="input-container">
+                        <input 
+                            type="text" 
+                            id="userInput" 
+                            placeholder="Digite sua mensagem..." 
+                            autocomplete="off"
+                        >
+                        <button id="sendButton" class="send-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="voice-controls">
+                        <button id="voiceButton" class="voice-button" title="Ativar voz">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                <line x1="12" y1="19" x2="12" y2="23"></line>
+                                <line x1="8" y1="23" x2="16" y2="23"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="sidebar">
+                <div class="panel">
+                    <h3>Status do Sistema</h3>
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <span class="status-label">Motor</span>
+                            <span class="status-value" id="motorStatus">-</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">LLM</span>
+                            <span class="status-value" id="llmStatus">-</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Voz</span>
+                            <span class="status-value" id="voiceStatus">-</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Segurança</span>
+                            <span class="status-value" id="securityStatus">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Ações Rápidas</h3>
+                    <div class="quick-actions">
+                        <button class="action-button" data-action="system_info">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            Info Sistema
+                        </button>
+                        <button class="action-button" data-action="security_scan">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                            Scan Segurança
+                        </button>
+                        <button class="action-button" data-action="dependency_check">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="16 18 22 12 16 6"></polyline>
+                                <polyline points="8 6 2 12 8 18"></polyline>
+                            </svg>
+                            Check Deps
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Estatísticas</h3>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Mensagens</span>
+                            <span class="stat-value" id="messageCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Uptime</span>
+                            <span class="stat-value" id="uptime">0s</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

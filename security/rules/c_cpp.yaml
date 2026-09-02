@@ -1,0 +1,240 @@
+# Regras de segurança para C/C++
+# Baseado em CWE e best practices
+
+c_strcpy:
+  type: buffer_overflow
+  severity: high
+  description: "strcpy é vulnerável a buffer overflow"
+  patterns:
+    - "strcpy\\s*\\("
+  remediation: "Use strncpy, strcpy_s, ou snprintf"
+
+c_strcat:
+  type: buffer_overflow
+  severity: high
+  description: "strcat é vulnerável a buffer overflow"
+  patterns:
+    - "strcat\\s*\\("
+  remediation: "Use strncat, strcat_s, ou snprintf"
+
+c_sprintf:
+  type: buffer_overflow
+  severity: high
+  description: "sprintf é vulnerável a buffer overflow"
+  patterns:
+    - "sprintf\\s*\\("
+  remediation: "Use snprintf ou sprintf_s"
+
+c_gets:
+  type: buffer_overflow
+  severity: critical
+  description: "gets é extremamente vulnerável a buffer overflow"
+  patterns:
+    - "gets\\s*\\("
+  remediation: "Use fgets ou getline"
+
+c_scanf:
+  type: buffer_overflow
+  severity: high
+  description: "scanf sem limites de tamanho é vulnerável a buffer overflow"
+  patterns:
+    - "scanf\\s*\\("
+  remediation: "Use scanf com limites de tamanho ou fgets"
+
+c_strcpy_no_check:
+  type: buffer_overflow
+  severity: high
+  description: "strcpy sem verificação de tamanho"
+  patterns:
+    - "strcpy\\s*\\([^,]+,[^,]+\\)"
+  remediation: "Verifique tamanho do buffer antes de copiar"
+
+c_format_string:
+  type: format_string
+  severity: medium
+  description: "printf com variável pode causar format string vulnerability"
+  patterns:
+    - "printf\\s*\\(\\s*\\w+\\s*\\)"
+  remediation: "Use printf com formato string constante"
+
+c_sprintf_format_string:
+  type: format_string
+  severity: high
+  description: "sprintf com variável como formato pode causar format string vulnerability"
+  patterns:
+    - "sprintf\\s*\\([^,]+,\\s*\\w+\\s*,"
+  remediation: "Use formato string constante"
+
+c_printf_user_input:
+  type: format_string
+  severity: critical
+  description: "printf com input do usuário é vulnerável a format string attack"
+  patterns:
+    - "printf\\s*\\(.*argv\\["
+    - "printf\\s*\\(.*getenv"
+  remediation: "Nunca use input do usuário como formato string"
+
+c_malloc_no_check:
+  type: null_pointer
+  severity: medium
+  description: "malloc sem verificação de retorno pode causar crash"
+  patterns:
+    - "malloc\\s*\\([^)]+\\)\\s*;"
+  remediation: "Sempre verifique se malloc retornou NULL"
+
+c_free_double:
+  type: memory_corruption
+  severity: high
+  description: "Double free pode causar memory corruption"
+  patterns:
+    - "free\\s*\\(.+\\)"
+  remediation: "Use ferramentas de análise ou ponteiros inteligentes"
+
+c_use_after_free:
+  type: memory_corruption
+  severity: high
+  description: "Use after free pode causar memory corruption"
+  patterns:
+    - "free\\s*\\(.+\\)"
+  remediation: "Use ferramentas de análise ou ponteiros inteligentes"
+
+c_buffer_read_overflow:
+  type: buffer_overflow
+  severity: high
+  description: "Leitura além dos limites do buffer"
+  patterns:
+    - "\\[\\s*\\w+\\s*\\+\\s*\\w+\\s*\\]"
+  remediation: "Verifique limites do array antes de acessar"
+
+c_buffer_write_overflow:
+  type: buffer_overflow
+  severity: high
+  description: "Escrita além dos limites do buffer"
+  patterns:
+    - "\\[\\s*\\w+\\s*\\+\\s*\\w+\\s*\\]\\s*="
+  remediation: "Verifique limites do array antes de escrever"
+
+c_integer_overflow:
+  type: integer_overflow
+  severity: medium
+  description: "Possível integer overflow"
+  patterns:
+    - "\\w+\\s*\\+\\s*\\w+\\s*\\*"
+    - "\\w+\\s*\\*\\s*\\w+\\s*\\+"
+  remediation: "Use verificação de overflow ou tipos seguros"
+
+c_race_condition:
+  type: race_condition
+  severity: medium
+  description: "Possível race condition em código multithread"
+  patterns:
+    - "pthread_create"
+    - "std::thread"
+  remediation: "Use mutexes ou atomic operations"
+
+c_hardcoded_password:
+  type: hardcoded_secrets
+  severity: high
+  description: "Senhas hardcoded no código"
+  patterns:
+    - "password.*=.*['\"]"
+    - "passwd.*=.*['\"]"
+    - "secret.*=.*['\"]"
+  remediation: "Use variáveis de ambiente ou arquivo de configuração"
+
+c_system:
+  type: command_injection
+  severity: high
+  description: "system() pode permitir command injection"
+  patterns:
+    - "system\\s*\\("
+  remediation: "Use exec* family com argumentos separados"
+
+c_popen:
+  type: command_injection
+  severity: high
+  description: "popen() pode permitir command injection"
+  patterns:
+    - "popen\\s*\\("
+  remediation: "Use exec* family com argumentos separados"
+
+c_weak_random:
+  type: weak_cryptography
+  severity: medium
+  description: "rand() não é criptograficamente seguro"
+  patterns:
+    - "rand\\s*\\("
+  remediation: "Use /dev/urandom ou bibliotecas criptográficas"
+
+c_time_seed:
+  type: weak_cryptography
+  severity: medium
+  description: "Usar time() como seed para rand() é previsível"
+  patterns:
+    - "srand\\s*\\(.*time"
+  remediation: "Use fonte de entropia adequada"
+
+c_tmpnam:
+  type: insecure_temp_file
+  severity: medium
+  description: "tmpnam() pode ter race conditions"
+  patterns:
+    - "tmpnam\\s*\\("
+  remediation: "Use mkstemp() ou mkdtemp()"
+
+c_mktemp:
+  type: insecure_temp_file
+  severity: medium
+  description: "mktemp() pode ter race conditions"
+  patterns:
+    - "mktemp\\s*\\("
+  remediation: "Use mkstemp() ou mkdtemp()"
+
+c_chmod_world_writable:
+  type: insecure_permissions
+  severity: medium
+  description: "Permissões world-writable são inseguras"
+  patterns:
+    - "chmod.*0777"
+    - "chmod.*0666"
+  remediation: "Use permissões mais restritivas"
+
+c_cpp_raw_pointer:
+  type: memory_management
+  severity: low
+  description: "Uso de raw pointers em C++ pode causar memory leaks"
+  patterns:
+    - "\\w+\\s*\\*"
+  remediation: "Considere smart pointers (std::unique_ptr, std::shared_ptr)"
+
+c_cpp_delete_array:
+  type: memory_management
+  severity: medium
+  description: "delete[] necessário para arrays alocados com new[]"
+  patterns:
+    - "new\\s+\\w+\\["
+  remediation: "Use delete[] para arrays ou std::vector"
+
+c_cpp_null_dereference:
+  type: null_pointer
+  severity: medium
+  description: "Possível null pointer dereference"
+  patterns:
+    - "->"
+  remediation: "Verifique se pointer não é NULL antes de usar"
+
+c_cpp_cast:
+  type: type_safety
+  severity: low
+  description: "C-style casts são inseguros"
+  patterns:
+    - "\\(\\w+\\*\\)"
+  remediation: "Use static_cast, dynamic_cast, const_cast, reinterpret_cast"
+
+c_cpp_virtual_destructor:
+  type: memory_leak
+  severity: medium
+  description: "Classe com métodos virtuais sem destructor virtual"
+  patterns:
+    - "virtual\\s+\\w+"
+  remediation: "Adicione destructor virtual à classe base"

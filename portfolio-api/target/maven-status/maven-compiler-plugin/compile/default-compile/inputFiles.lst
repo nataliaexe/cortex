@@ -1,7 +1,0 @@
-/home/nana/cortex/portfolio-api/src/main/java/dev/julianasilva/portfolio/PortfolioApiApplication.java
-/home/nana/cortex/portfolio-api/src/main/java/dev/julianasilva/portfolio/config/CorsConfig.java
-/home/nana/cortex/portfolio-api/src/main/java/dev/julianasilva/portfolio/config/OpenApiConfig.java
-/home/nana/cortex/portfolio-api/src/main/java/dev/julianasilva/portfolio/config/SecurityConfig.java
-/home/nana/cortex/portfolio-api/src/main/java/dev/julianasilva/portfolio/controller/AboutController.java
-/home/nana/cortex/portfolio-api/src/main/java/dev/julianasilva/portfolio/controller/ContactController.java
-/home/nana/cortex/portfolio-api/src/main/java/dev/julianasilva/portfolio/controller/ProjectController.java

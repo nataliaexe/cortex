@@ -1,0 +1,77 @@
+# Gênesis Córtex - Docker Compose
+# Orquestração de containers
+
+version: '3.8'
+
+services:
+  # Serviço principal do Córtex
+  cortex:
+    build: .
+    container_name: cortex_main
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./reports:/app/reports
+      - ./backups:/app/backups
+      - ./config.yaml:/app/config.yaml
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CORTEX_CONFIG=/app/config.yaml
+    restart: unless-stopped
+    networks:
+      - cortex_network
+
+  # Serviço Ollama (LLM local)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: cortex_ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    networks:
+      - cortex_network
+
+  # Serviço Redis (para comunicação entre módulos)
+  redis:
+    image: redis:7-alpine
+    container_name: cortex_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - cortex_network
+
+  # Serviço Web (PWA)
+  web:
+    build: .
+    container_name: cortex_web
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./web:/app/web
+      - ./config.yaml:/app/config.yaml
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CORTEX_CONFIG=/app/config.yaml
+    working_dir: /app
+    command: ["python", "web/app.py"]
+    depends_on:
+      - cortex
+      - ollama
+    restart: unless-stopped
+    networks:
+      - cortex_network
+
+networks:
+  cortex_network:
+    driver: bridge
+
+volumes:
+  ollama_data:
+  redis_data:

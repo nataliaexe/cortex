@@ -1,0 +1,205 @@
+# Regras de segurança para JavaScript/TypeScript
+# Baseado em OWASP e best practices
+
+javascript_eval:
+  type: dangerous_function
+  severity: critical
+  description: "Uso de eval() pode executar código arbitrário"
+  patterns:
+    - "eval\\("
+  remediation: "Evite eval(). Use JSON.parse() para JSON ou alternativas mais seguras"
+
+javascript_function:
+  type: dangerous_function
+  severity: critical
+  description: "Function() constructor pode executar código arbitrário"
+  patterns:
+    - "new Function\\("
+  remediation: "Evite Function(). Use funções regulares ou alternativas mais seguras"
+
+javascript_settimeout_string:
+  type: dangerous_function
+  severity: high
+  description: "setTimeout/setInterval com string pode executar código arbitrário"
+  patterns:
+    - "setTimeout\\(.*['\"]"
+    - "setInterval\\(.*['\"]"
+  remediation: "Use função callback em vez de string"
+
+javascript_innerhtml:
+  type: xss
+  severity: high
+  description: "innerHTML pode causar XSS se não sanitizado"
+  patterns:
+    - "\\.innerHTML\\s*="
+  remediation: "Use textContent ou sanitize HTML antes de usar innerHTML"
+
+javascript_document_write:
+  type: xss
+  severity: high
+  description: "document.write pode causar XSS"
+  patterns:
+    - "document\\.write"
+  remediation: "Evite document.write. Use DOM manipulation seguro"
+
+javascript_innerhtml_user_input:
+  type: xss
+  severity: critical
+  description: "innerHTML com input do usuário é vulnerável a XSS"
+  patterns:
+    - "innerHTML.*request\\."
+    - "innerHTML.*params\\."
+    - "innerHTML.*query\\."
+  remediation: "Nunca use innerHTML com input não sanitizado"
+
+javascript_location_hash:
+  type: xss
+  severity: medium
+  description: "Uso de location.hash sem sanitização pode causar XSS"
+  patterns:
+    - "location\\.hash"
+  remediation: "Sanitize e validar location.hash antes de usar"
+
+javascript_document_cookie:
+  type: sensitive_data
+  severity: medium
+  description: "Acesso direto a document.cookie pode expor dados sensíveis"
+  patterns:
+    - "document\\.cookie"
+  remediation: "Use HttpOnly cookies ou gerenciamento seguro de sessões"
+
+javascript_localstorage_sensitive:
+  type: sensitive_data
+  severity: medium
+  description: "Armazenar dados sensíveis em localStorage é inseguro"
+  patterns:
+    - "localStorage.*password"
+    - "localStorage.*token"
+    - "localStorage.*secret"
+  remediation: "Use sessionStorage ou HttpOnly cookies para dados sensíveis"
+
+javascript_json_parse:
+  type: dangerous_deserialization
+  severity: medium
+  description: "JSON.parse com input não validado pode causar problemas"
+  patterns:
+    - "JSON\\.parse"
+  remediation: "Valide input antes de JSON.parse"
+
+javascript_postmessage:
+  type: xss
+  severity: medium
+  description: "postMessage sem validação de origem pode causar XSS"
+  patterns:
+    - "postMessage"
+  remediation: "Sempre valide event.origin em message handlers"
+
+javascript_atob_btoa:
+  type: weak_encoding
+  severity: low
+  description: "atob/btoa não são criptografia, apenas encoding"
+  patterns:
+    - "atob\\("
+    - "btoa\\("
+  remediation: "Use criptografia real para dados sensíveis"
+
+javascript_hardcoded_secrets:
+  type: hardcoded_secrets
+  severity: high
+  description: "Segredos hardcoded no código JavaScript"
+  patterns:
+    - "api_key.*=.*['\"]"
+    - "secret.*=.*['\"]"
+    - "password.*=.*['\"]"
+    - "token.*=.*['\"]"
+  remediation: "Use variáveis de ambiente ou backend para segredos"
+
+javascript_console_log:
+  type: information_disclosure
+  severity: low
+  description: "console.log em produção pode expor informações"
+  patterns:
+    - "console\\.log"
+  remediation: "Remova console.log do código de produção"
+
+javascript_debugger:
+  type: debug_mode
+  severity: low
+  description: "debugger statement em código de produção"
+  patterns:
+    - "debugger"
+  remediation: "Remova debugger do código de produção"
+
+javascript_sql_injection:
+  type: sql_injection
+  severity: critical
+  description: "SQL usando concatenação de strings é vulnerável a SQL injection"
+  patterns:
+    - "SELECT.*\\+.*FROM"
+    - "INSERT.*\\+.*INTO"
+    - "UPDATE.*\\+.*SET"
+    - "DELETE.*\\+.*FROM"
+  remediation: "Use parameterized queries ou ORM"
+
+javascript_nosql_injection:
+  type: nosql_injection
+  severity: high
+  description: "NoSQL usando input não sanitizado pode causar injection"
+  patterns:
+    - "\\$where.*request\\."
+    - "\\$ne.*request\\."
+  remediation: "Use input sanitization e query builders seguros"
+
+javascript_dom_xss:
+  type: xss
+  severity: high
+  description: "DOM XSS vulnerável com input do usuário"
+  patterns:
+    - "document\\.write.*request\\."
+    - "document\\.domain.*request\\."
+  remediation: "Use DOMPurify ou frameworks com sanitização automática"
+
+javascript_csrf_vulnerable:
+  type: csrf
+  severity: high
+  description: "Requisições sem proteção CSRF podem ser vulneráveis"
+  patterns:
+    - "fetch\\(.*{"
+    - "XMLHttpRequest"
+  remediation: "Use CSRF tokens ou SameSite cookies"
+
+javascript_nodejs_child_process:
+  type: command_injection
+  severity: high
+  description: "child_process.exec pode permitir command injection"
+  patterns:
+    - "child_process\\.exec"
+    - "require\\(['\"]child_process['\"]\\)"
+  remediation: "Use execFile com array de argumentos ou sanitize inputs"
+
+javascript_nodejs_eval:
+  type: dangerous_function
+  severity: critical
+  description: "vm.eval em Node.js pode executar código arbitrário"
+  patterns:
+    - "vm\\.eval"
+    - "vm\\.runInNewContext"
+  - remediation: "Evite vm module ou sandbox adequadamente"
+
+javascript_weak_crypto:
+  type: weak_cryptography
+  severity: medium
+  description: "Algoritmos criptográficos fracos"
+  patterns:
+    - "crypto\\.createHash\\(['\"]md4['\"]\\)"
+    - "crypto\\.createHash\\(['\"]md5['\"]\\)"
+    - "crypto\\.createHash\\(['\"]sha1['\"]\\)"
+  remediation: "Use algoritmos mais fortes como SHA-256"
+
+javascript_http_insecure:
+  type: insecure_protocol
+  severity: medium
+  description: "Uso de HTTP em vez de HTTPS"
+  patterns:
+    - "http://"
+  remediation: "Use HTTPS em produção"

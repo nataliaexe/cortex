@@ -1,0 +1,280 @@
+# Regras de segurança para Assembly
+# Baseado em análise de código de baixo nível
+
+assembly_syscall:
+  type: dangerous_syscall
+  severity: medium
+  description: "Syscalls diretas requerem análise cuidadosa"
+  patterns:
+    - "int 0x80"
+    - "syscall"
+    - "sysenter"
+  remediation: "Valide todos os parâmetros e use sandbox quando possível"
+
+assembly_ret:
+  type: control_flow
+  severity: medium
+  description: "instrução ret pode ser usada em ROP attacks"
+  patterns:
+    - "ret"
+  remediation: "Use proteções como ASLR e stack canaries"
+
+assembly_call:
+  type: control_flow
+  severity: low
+  description: "instrução call pode ser usada em ROP attacks"
+  patterns:
+    - "call"
+  remediation: "Use proteções como ASLR e stack canaries"
+
+assembly_jmp:
+  type: control_flow
+  severity: low
+  description: "instrução jmp pode ser usada em ROP attacks"
+  patterns:
+    - "jmp"
+  remediation: "Use proteções como ASLR e stack canaries"
+
+assembly_shellcode:
+  type: shellcode
+  severity: critical
+  description: "Padrões que indicam possível shellcode"
+  patterns:
+    - "\\xeb\\x"  # JMP short
+    - "\\xe8\\x"  # CALL relative
+    - "\\xc3"     # RET
+  remediation: "Analise cuidadosamente código com esses padrões"
+
+assembly_stack_overflow:
+  type: buffer_overflow
+  severity: high
+  description: "Instruções que podem causar stack overflow"
+  patterns:
+    - "push"
+    - "pop"
+  remediation: "Use stack canaries e bounded buffers"
+
+assembly_nop_sled:
+  type: shellcode
+  severity: high
+  description: "NOP sled indica possível shellcode"
+  patterns:
+    - "\\x90\\x90\\x90"  # NOP instructions
+  remediation: "Analise código que contém NOP sleds"
+
+assembly_hardcoded_address:
+  type: hardcoded_address
+  severity: medium
+  description: "Endereços hardcoded podem indicar código malicioso"
+  patterns:
+    - "0x[0-9a-f]{8}"
+  remediation: "Use PIC (Position Independent Code) quando possível"
+
+assembly_direct_memory_access:
+  type: memory_safety
+  severity: medium
+  description: "Acesso direto à memória pode causar issues"
+  patterns:
+    - "\\["
+  remediation: "Valide todos os endereços antes de acessar"
+
+assembly_xor:
+  type: obfuscation
+  severity: low
+  description: "XOR pode ser usado para obfuscação"
+  patterns:
+    - "xor"
+  remediation: "Analise código com uso extensivo de XOR"
+
+assembly_mov:
+  type: data_movement
+  severity: low
+  description: "instrução mov pode indicar manipulação de dados"
+  patterns:
+    - "mov"
+  remediation: "Analise padrões de movimentação de dados"
+
+assembly_cmp:
+  type: control_flow
+  severity: low
+  description: "instrução cmp usada em branching"
+  patterns:
+    - "cmp"
+  remediation: "Analise lógica de branching"
+
+assembly_test:
+  type: control_flow
+  severity: low
+  description: "instrução test usada em branching"
+  patterns:
+    - "test"
+  remediation: "Analise lógica de branching"
+
+assembly_lea:
+  type: address_calculation
+  severity: low
+  description: "instrução lea calcula endereços"
+  patterns:
+    - "lea"
+  remediation: "Analise cálculos de endereço"
+
+assembly_pushad:
+  type: register_manipulation
+  severity: medium
+  description: "pushad salva todos os registros"
+  patterns:
+    - "pushad"
+  remediation: "Analise uso de manipulação de registros"
+
+assembly_popad:
+  type: register_manipulation
+  severity: medium
+  description: "popad restaura todos os registros"
+  patterns:
+    - "popad"
+  remediation: "Analise uso de manipulação de registros"
+
+assembly_int3:
+  type: debug
+  severity: low
+  description: "int3 é breakpoint de debugger"
+  patterns:
+    - "int3"
+    - "\\xcc"
+  remediation: "Pode indicar código de debug ou anti-debug"
+
+assembly_cli:
+  type: privilege_escalation
+  severity: high
+  description: "cli desabilita interrupções"
+  patterns:
+    - "cli"
+  remediation: "Geralmente usado apenas em código de kernel"
+
+assembly_sti:
+  type: privilege_escalation
+  severity: high
+  description: "sti habilita interrupções"
+  patterns:
+    - "sti"
+  remediation: "Geralmente usado apenas em código de kernel"
+
+assembly_in:
+  type: io_operation
+  severity: medium
+  description: "in lê de portas I/O"
+  patterns:
+    - "in"
+  remediation: "Requer privilégios adequados"
+
+assembly_out:
+  type: io_operation
+  severity: medium
+  description: "out escreve em portas I/O"
+  patterns:
+    - "out"
+  remediation: "Requer privilégios adequados"
+
+assembly_cpuid:
+  type: information_gathering
+  severity: low
+  description: "cpuid obtém informações do CPU"
+  patterns:
+    - "cpuid"
+  remediation: "Geralmente usado para fingerprinting"
+
+assembly_rdtsc:
+  type: timing
+  severity: low
+  description: "rdtsc lê timestamp counter"
+  patterns:
+    - "rdtsc"
+  remediation: "Pode ser usado em timing attacks"
+
+assembly_sgdt:
+  type: privilege_escalation
+  severity: high
+  description: "sgdt lê GDT register"
+  patterns:
+    - "sgdt"
+  remediation: "Requer privilégios de kernel"
+
+assembly_sidt:
+  type: privilege_escalation
+  severity: high
+  description: "sidt lê IDT register"
+  patterns:
+    - "sidt"
+  remediation: "Requer privilégios de kernel"
+
+assembly_sldt:
+  type: privilege_escalation
+  severity: high
+  description: "sldt lê LDT register"
+  patterns:
+    - "sldt"
+  remediation: "Requer privilégios de kernel"
+
+assembly_str:
+  type: privilege_escalation
+  severity: high
+  description: "str lê task register"
+  patterns:
+    - "str"
+  remediation: "Requer privilégios de kernel"
+
+assembly_smsw:
+  type: privilege_escalation
+  severity: high
+  description: "smsw lê machine status word"
+  patterns:
+    - "smsw"
+  remediation: "Requer privilégios de kernel"
+
+assembly_invlpg:
+  type: cache_manipulation
+  severity: medium
+  description: "invlpg invalida TLB entry"
+  patterns:
+    - "invlpg"
+  remediation: "Pode ser usado em cache attacks"
+
+assembly_wbinvd:
+  type: cache_manipulation
+  severity: medium
+  description: "wbinvd write-back e invalida cache"
+  patterns:
+    - "wbinvd"
+  remediation: "Requer privilégios de kernel"
+
+assembly_rsm:
+  type: privilege_escalation
+  severity: high
+  description: "rsm retorna do SMM"
+  patterns:
+    - "rsm"
+  remediation: "Requer privilégios de kernel"
+
+assembly_rdmsr:
+  type: privilege_escalation
+  severity: high
+  description: "rdmsr lê model-specific register"
+  patterns:
+    - "rdmsr"
+  remediation: "Requer privilégios de kernel"
+
+assembly_wrmsr:
+  type: privilege_escalation
+  severity: high
+  description: "wrmsr escreve em model-specific register"
+  patterns:
+    - "wrmsr"
+  remediation: "Requer privilégios de kernel"
+
+assembly_rdpmc:
+  type: privilege_escalation
+  severity: high
+  description: "rdpmc lê performance monitoring counter"
+  patterns:
+    - "rdpmc"
+  remediation: "Requer privilégios de kernel"

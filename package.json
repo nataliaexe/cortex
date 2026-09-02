@@ -1,8 +1,0 @@
-{
-  "name": "portfolio-frontend",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "python3 -m http.server 8000 --directory portfolio-frontend"
-  }
-}

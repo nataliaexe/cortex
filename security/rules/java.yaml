@@ -1,0 +1,148 @@
+# Regras de segurança para Java
+# Baseado em OWASP Top 10 e best practices
+
+java_statement:
+  type: sql_injection
+  severity: high
+  description: "Uso de Statement pode permitir SQL injection"
+  patterns:
+    - "Statement.*execute"
+    - "Statement.*executeQuery"
+    - "Statement.*executeUpdate"
+  remediation: "Use PreparedStatement com parâmetros"
+
+java_statement_execute:
+  type: sql_injection
+  severity: critical
+  description: "Statement.execute() com concatenação de strings"
+  patterns:
+    - "Statement.*execute.*\\+"
+  remediation: "Use PreparedStatement com placeholders"
+
+java_password_hashcode:
+  type: weak_hash
+  severity: medium
+  description: "hashCode não é adequado para hash de senhas"
+  patterns:
+    - "password.*hashCode"
+    - "passwd.*hashCode"
+  remediation: "Use BCrypt, SCrypt ou Argon2 para senhas"
+
+java_md5_hash:
+  type: weak_hash
+  severity: medium
+  description: "MD5 não é mais seguro para hashes"
+  patterns:
+    - "MessageDigest.*MD5"
+  remediation: "Use SHA-256 ou stronger"
+
+java_sha1_hash:
+  type: weak_hash
+  severity: medium
+  description: "SHA-1 não é mais seguro para hashes"
+  patterns:
+    - "MessageDigest.*SHA-1"
+  remediation: "Use SHA-256 ou stronger"
+
+java_deserialization:
+  type: dangerous_deserialization
+  severity: critical
+  description: "Deserialização não segura pode executar código arbitrário"
+  patterns:
+    - "ObjectInputStream"
+    - "XMLDecoder"
+  remediation: "Use valida��o de input ou serialização segura"
+
+java_runtime_exec:
+  type: command_injection
+  severity: high
+  description: "Runtime.exec() pode permitir command injection"
+  patterns:
+    - "Runtime\\.exec"
+  remediation: "Valide e sanitize todos os inputs"
+
+java_processbuilder:
+  type: command_injection
+  severity: high
+  description: "ProcessBuilder pode permitir command injection"
+  patterns:
+    - "ProcessBuilder"
+  remediation: "Valide e sanitize todos os inputs"
+
+java_random:
+  type: weak_cryptography
+  severity: medium
+  description: "java.util.Random não é criptograficamente seguro"
+  patterns:
+    - "new Random\\(\\)"
+    - "java.util.Random"
+  remediation: "Use java.security.SecureRandom"
+
+java_hardcoded_password:
+  type: hardcoded_secrets
+  severity: high
+  description: "Senhas hardcoded no código"
+  patterns:
+    - "password.*=.*['\"]"
+    - "passwd.*=.*['\"]"
+    - "secret.*=.*['\"]"
+    - "api_key.*=.*['\"]"
+  remediation: "Use variáveis de ambiente ou arquivo de configuração"
+
+java_printstacktrace:
+  type: information_disclosure
+  severity: low
+  description: "printStackTrace pode expor informações sensíveis"
+  patterns:
+    - "printStackTrace"
+  remediation: "Use logging apropriado em vez de printStackTrace"
+
+java_system_out:
+  type: information_disclosure
+  severity: low
+  description: "System.out.println em produção pode expor informações"
+  patterns:
+    - "System\\.out\\.println"
+  remediation: "Use framework de logging apropriado"
+
+java_ssl_trust_all:
+  type: weak_ssl
+  severity: high
+  description: "TrustManager que confia em todos os certificados"
+  patterns:
+    - "TrustManager.*trustAll"
+    - "X509TrustManager.*return true"
+  remediation: "Implemente validação de certificados adequada"
+
+java_xss_vulnerable:
+  type: xss
+  severity: high
+  description: "Código vulnerável a XSS"
+  patterns:
+    - "request\\.getParameter.*response\\.getWriter"
+  remediation: "Use escape adequado ou frameworks como OWASP ESAPI"
+
+java_path_traversal:
+  type: path_traversal
+  severity: high
+  description: "Código vulnerável a path traversal"
+  patterns:
+    - "new File\\(request\\.getParameter"
+  remediation: "Valide e normalize paths antes de usar"
+
+java_ldap_injection:
+  type: ldap_injection
+  severity: high
+  description: "Código vulnerável a LDAP injection"
+  patterns:
+    - "search.*context.*request\\.getParameter"
+  remediation: "Use parameterized LDAP queries"
+
+java_log4shell:
+  type: log4shell
+  severity: critical
+  description: "Vulnerabilidade Log4Shell (CVE-2021-44228)"
+  patterns:
+    - "log4j.*core"
+    - "JndiLookup"
+  remediation: "Atualize Log4j para versão segura (2.17.1+)"

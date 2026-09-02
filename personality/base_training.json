@@ -1,0 +1,774 @@
+{
+  "intents": {
+    "help": {
+      "description": "Pedir ajuda",
+      "examples": [
+        "ajuda",
+        "help",
+        "o que você pode fazer",
+        "quais são suas funcionalidades",
+        "como posso te usar"
+      ],
+      "response": "Sou o Córtex, seu assistente pessoal offline. Posso ajudar com desenvolvimento de software, cybersecurity, robótica, neurociência e tarefas do sistema. Digite 'ajuda' para ver uma lista completa de comandos.",
+      "parameters": {}
+    },
+    "system_info": {
+      "description": "Obter informações do sistema",
+      "examples": [
+        "informações do sistema",
+        "info do sistema",
+        "sistema",
+        "qual o sistema operacional",
+        "versão do sistema"
+      ],
+      "response": "system_info",
+      "parameters": {}
+    },
+    "disk_usage": {
+      "description": "Verificar uso de disco",
+      "examples": [
+        "uso de disco",
+        "espaço em disco",
+        "quanto espaço livre",
+        "disco",
+        "armazenamento"
+      ],
+      "response": "disk_usage",
+      "parameters": {}
+    },
+    "memory_usage": {
+      "description": "Verificar uso de memória",
+      "examples": [
+        "uso de memória",
+        "memória ram",
+        "quanta memória",
+        "ram"
+      ],
+      "response": "memory_usage",
+      "parameters": {}
+    },
+    "network_status": {
+      "description": "Verificar status da rede",
+      "examples": [
+        "status da rede",
+        "rede",
+        "conexão de rede",
+        "internet"
+      ],
+      "response": "network_status",
+      "parameters": {}
+    },
+    "running_processes": {
+      "description": "Listar processos em execução",
+      "examples": [
+        "processos",
+        "processos rodando",
+        "quais processos",
+        "lista de processos"
+      ],
+      "response": "running_processes",
+      "parameters": {}
+    },
+    "list_files": {
+      "description": "Listar arquivos em um diretório",
+      "examples": [
+        "listar arquivos",
+        "quais arquivos",
+        "conteúdo do diretório",
+        "arquivos em"
+      ],
+      "response": "list_files",
+      "parameters": {
+        "path": {
+          "type": "path",
+          "description": "Caminho do diretório",
+          "required": false
+        }
+      }
+    },
+    "read_file": {
+      "description": "Ler conteúdo de um arquivo",
+      "examples": [
+        "ler arquivo",
+        "mostrar arquivo",
+        "conteúdo do arquivo",
+        "abrir arquivo"
+      ],
+      "response": "read_file",
+      "parameters": {
+        "path": {
+          "type": "path",
+          "description": "Caminho do arquivo",
+          "required": true
+        }
+      }
+    },
+    "write_file": {
+      "description": "Escrever conteúdo em um arquivo",
+      "examples": [
+        "escrever arquivo",
+        "criar arquivo",
+        "salvar arquivo",
+        "gravar arquivo"
+      ],
+      "response": "write_file",
+      "parameters": {
+        "path": {
+          "type": "path",
+          "description": "Caminho do arquivo",
+          "required": true
+        },
+        "content": {
+          "type": "string",
+          "description": "Conteúdo a escrever",
+          "required": true
+        }
+      }
+    },
+    "delete_file": {
+      "description": "Deletar um arquivo",
+      "examples": [
+        "deletar arquivo",
+        "apagar arquivo",
+        "remover arquivo",
+        "excluir arquivo"
+      ],
+      "response": "delete_file",
+      "parameters": {
+        "path": {
+          "type": "path",
+          "description": "Caminho do arquivo",
+          "required": true
+        }
+      }
+    },
+    "create_directory": {
+      "description": "Criar um diretório",
+      "examples": [
+        "criar diretório",
+        "criar pasta",
+        "novo diretório",
+        "nova pasta"
+      ],
+      "response": "create_directory",
+      "parameters": {
+        "path": {
+          "type": "path",
+          "description": "Caminho do diretório",
+          "required": true
+        }
+      }
+    },
+    "set_volume": {
+      "description": "Definir volume do sistema",
+      "examples": [
+        "volume",
+        "aumentar volume",
+        "diminuir volume",
+        "mudar volume"
+      ],
+      "response": "set_volume",
+      "parameters": {
+        "level": {
+          "type": "number",
+          "description": "Nível de volume (0-100)",
+          "required": false
+        }
+      }
+    },
+    "set_brightness": {
+      "description": "Definir brilho da tela",
+      "examples": [
+        "brilho",
+        "aumentar brilho",
+        "diminuir brilho",
+        "mudar brilho"
+      ],
+      "response": "set_brightness",
+      "parameters": {
+        "level": {
+          "type": "number",
+          "description": "Nível de brilho (0-100)",
+          "required": false
+        }
+      }
+    },
+    "create_note": {
+      "description": "Criar uma nota",
+      "examples": [
+        "criar nota",
+        "nova nota",
+        "anotar",
+        "lembrete"
+      ],
+      "response": "create_note",
+      "parameters": {
+        "content": {
+          "type": "string",
+          "description": "Conteúdo da nota",
+          "required": true
+        },
+        "title": {
+          "type": "string",
+          "description": "Título da nota",
+          "required": false
+        }
+      }
+    },
+    "list_notes": {
+      "description": "Listar notas",
+      "examples": [
+        "listar notas",
+        "minhas notas",
+        "ver notas",
+        "anotações"
+      ],
+      "response": "list_notes",
+      "parameters": {}
+    },
+    "set_timer": {
+      "description": "Definir um timer",
+      "examples": [
+        "timer",
+        "temporizador",
+        "cronômetro",
+        "alarme"
+      ],
+      "response": "set_timer",
+      "parameters": {
+        "seconds": {
+          "type": "number",
+          "description": "Tempo em segundos",
+          "required": false
+        }
+      }
+    },
+    "set_reminder": {
+      "description": "Definir um lembrete",
+      "examples": [
+        "lembrete",
+        "lembrar-me",
+        "alerta",
+        "notificação"
+      ],
+      "response": "set_reminder",
+      "parameters": {
+        "message": {
+          "type": "string",
+          "description": "Mensagem do lembrete",
+          "required": true
+        },
+        "time": {
+          "type": "string",
+          "description": "Hora do lembrete",
+          "required": true
+        }
+      }
+    },
+    "scan_ports": {
+      "description": "Escanear portas abertas",
+      "examples": [
+        "escanear portas",
+        "scan de portas",
+        "portas abertas",
+        "varrer portas"
+      ],
+      "response": "scan_ports",
+      "parameters": {
+        "host": {
+          "type": "string",
+          "description": "Host para escanear",
+          "required": false
+        }
+      }
+    },
+    "scan_processes": {
+      "description": "Escanear processos suspeitos",
+      "examples": [
+        "escanear processos",
+        "processos suspeitos",
+        "análise de processos",
+        "verificar processos"
+      ],
+      "response": "scan_processes",
+      "parameters": {}
+    },
+    "check_passwords": {
+      "description": "Verificar senhas fracas",
+      "examples": [
+        "verificar senhas",
+        "senhas fracas",
+        "análise de senhas",
+        "segurança de senhas"
+      ],
+      "response": "check_passwords",
+      "parameters": {}
+    },
+    "analyze_logs": {
+      "description": "Analisa logs do sistema",
+      "examples": [
+        "analisar logs",
+        "logs do sistema",
+        "ver logs",
+        "análise de logs"
+      ],
+      "response": "analyze_logs",
+      "parameters": {
+        "path": {
+          "type": "path",
+          "description": "Caminho do arquivo de log",
+          "required": false
+        }
+      }
+    },
+    "run_code": {
+      "description": "Executar código",
+      "examples": [
+        "executar código",
+        "rodar código",
+        "run code",
+        "compilar"
+      ],
+      "response": "run_code",
+      "parameters": {
+        "code": {
+          "type": "string",
+          "description": "Código a executar",
+          "required": true
+        },
+        "language": {
+          "type": "string",
+          "description": "Linguagem do código",
+          "required": false
+        }
+      }
+    },
+    "git_status": {
+      "description": "Status do git",
+      "examples": [
+        "git status",
+        "status do repositório",
+        "situação do git",
+        "git"
+      ],
+      "response": "git_status",
+      "parameters": {}
+    },
+    "git_commit": {
+      "description": "Commit do git",
+      "examples": [
+        "git commit",
+        "fazer commit",
+        "commitar",
+        "salvar no git"
+      ],
+      "response": "git_commit",
+      "parameters": {
+        "message": {
+          "type": "string",
+          "description": "Mensagem do commit",
+          "required": false
+        }
+      }
+    },
+    "docker_status": {
+      "description": "Status do Docker",
+      "examples": [
+        "docker status",
+        "containers docker",
+        "situação do docker",
+        "docker"
+      ],
+      "response": "docker_status",
+      "parameters": {}
+    },
+    "web_search": {
+      "description": "Busca na web",
+      "examples": [
+        "buscar na web",
+        "pesquisar",
+        "web search",
+        "procurar"
+      ],
+      "response": "web_search",
+      "parameters": {
+        "query": {
+          "type": "string",
+          "description": "Query de busca",
+          "required": true
+        }
+      }
+    },
+    "download_file": {
+      "description": "Baixar arquivo",
+      "examples": [
+        "baixar arquivo",
+        "download",
+        "descargar",
+        "obter arquivo"
+      ],
+      "response": "download_file",
+      "parameters": {
+        "url": {
+          "type": "string",
+          "description": "URL do arquivo",
+          "required": true
+        },
+        "destination": {
+          "type": "path",
+          "description": "Destino do download",
+          "required": false
+        }
+      }
+    },
+    "neuroscience_query": {
+      "description": "Consulta neurociência",
+      "examples": [
+        "neurociência",
+        "cérebro",
+        "neuroanatomia",
+        "sistema nervoso"
+      ],
+      "response": "neuroscience_query",
+      "parameters": {
+        "query": {
+          "type": "string",
+          "description": "Query sobre neurociência",
+          "required": true
+        }
+      }
+    },
+    "robotics_query": {
+      "description": "Consulta robótica",
+      "examples": [
+        "robótica",
+        "robôs",
+        "eletrônica",
+        "hardware"
+      ],
+      "response": "robotics_query",
+      "parameters": {
+        "query": {
+          "type": "string",
+          "description": "Query sobre robótica",
+          "required": true
+        }
+      }
+    },
+    "security_query": {
+      "description": "Consulta segurança",
+      "examples": [
+        "segurança",
+        "cybersecurity",
+        "vulnerabilidade",
+        "hacking"
+      ],
+      "response": "security_query",
+      "parameters": {
+        "query": {
+          "type": "string",
+          "description": "Query sobre segurança",
+          "required": true
+        }
+      }
+    },
+    "store_memory": {
+      "description": "Armazenar memória",
+      "examples": [
+        "lembrar",
+        "memorizar",
+        "guardar informação",
+        "salvar memória"
+      ],
+      "response": "store_memory",
+      "parameters": {
+        "content": {
+          "type": "string",
+          "description": "Conteúdo a memorizar",
+          "required": true
+        }
+      }
+    },
+    "retrieve_memory": {
+      "description": "Recuperar memória",
+      "examples": [
+        "recuperar memória",
+        "lembrar de",
+        "o que você lembra",
+        "memórias"
+      ],
+      "response": "retrieve_memory",
+      "parameters": {
+        "id": {
+          "type": "string",
+          "description": "ID da memória",
+          "required": false
+        }
+      }
+    },
+    "search_memories": {
+      "description": "Buscar memórias",
+      "examples": [
+        "buscar memórias",
+        "procurar memória",
+        "encontrar informação",
+        "pesquisar memória"
+      ],
+      "response": "search_memories",
+      "parameters": {
+        "query": {
+          "type": "string",
+          "description": "Query de busca",
+          "required": true
+        }
+      }
+    },
+    "update_config": {
+      "description": "Atualizar configuração",
+      "examples": [
+        "atualizar configuração",
+        "mudar config",
+        "alterar configuração",
+        "configurar"
+      ],
+      "response": "update_config",
+      "parameters": {
+        "key": {
+          "type": "string",
+          "description": "Chave de configuração",
+          "required": true
+        },
+        "value": {
+          "type": "string",
+          "description": "Valor da configuração",
+          "required": true
+        }
+      }
+    },
+    "reload_config": {
+      "description": "Recarregar configuração",
+      "examples": [
+        "recarregar configuração",
+        "reload config",
+        "reiniciar configuração",
+        "recarregar"
+      ],
+      "response": "reload_config",
+      "parameters": {}
+    },
+    "health_check": {
+      "description": "Verificação de saúde",
+      "examples": [
+        "health check",
+        "verificar saúde",
+        "status do sistema",
+        "diagnóstico"
+      ],
+      "response": "health_check",
+      "parameters": {}
+    },
+    "performance_test": {
+      "description": "Teste de performance",
+      "examples": [
+        "teste de performance",
+        "benchmark",
+        "testar performance",
+        "velocidade"
+      ],
+      "response": "performance_test",
+      "parameters": {}
+    },
+    "diagnostic_report": {
+      "description": "Relatório de diagnóstico",
+      "examples": [
+        "relatório de diagnóstico",
+        "diagnóstico completo",
+        "relatório do sistema",
+        "análise completa"
+      ],
+      "response": "diagnostic_report",
+      "parameters": {}
+    },
+    "create_backup": {
+      "description": "Criar backup",
+      "examples": [
+        "criar backup",
+        "fazer backup",
+        "salvar backup",
+        "backup"
+      ],
+      "response": "create_backup",
+      "parameters": {
+        "path": {
+          "type": "path",
+          "description": "Caminho para backup",
+          "required": false
+        }
+      }
+    },
+    "restore_backup": {
+      "description": "Restaurar backup",
+      "examples": [
+        "restaurar backup",
+        "recuperar backup",
+        "voltar backup",
+        "restore"
+      ],
+      "response": "restore_backup",
+      "parameters": {
+        "file": {
+          "type": "path",
+          "description": "Arquivo de backup",
+          "required": true
+        }
+      }
+    },
+    "analyze_binary": {
+      "description": "Analisar binário",
+      "examples": [
+        "analisar binário",
+        "análise de binário",
+        "examinar executável",
+        "binário"
+      ],
+      "response": "analyze_binary",
+      "parameters": {
+        "path": {
+          "type": "path",
+          "description": "Caminho do binário",
+          "required": true
+        }
+      }
+    },
+    "analyze_dependencies": {
+      "description": "Analisar dependências",
+      "examples": [
+        "analisar dependências",
+        "verificar dependências",
+        "check dependencies",
+        "vulnerabilidades"
+      ],
+      "response": "analyze_dependencies",
+      "parameters": {
+        "path": {
+          "type": "path",
+          "description": "Caminho do projeto",
+          "required": false
+        }
+      }
+    },
+    "generate_report": {
+      "description": "Gerar relatório",
+      "examples": [
+        "gerar relatório",
+        "criar relatório",
+        "relatório",
+        "report"
+      ],
+      "response": "generate_report",
+      "parameters": {
+        "type": {
+          "type": "string",
+          "description": "Tipo de relatório",
+          "required": false
+        }
+      }
+    },
+    "ping_host": {
+      "description": "Ping em host",
+      "examples": [
+        "ping",
+        "testar conexão",
+        "verificar host",
+        "latência"
+      ],
+      "response": "ping_host",
+      "parameters": {
+        "host": {
+          "type": "string",
+          "description": "Host para ping",
+          "required": false
+        }
+      }
+    },
+    "trace_route": {
+      "description": "Rota até host",
+      "examples": [
+        "traceroute",
+        "rota",
+        "caminho até host",
+        "trace"
+      ],
+      "response": "trace_route",
+      "parameters": {
+        "host": {
+          "type": "string",
+          "description": "Host para traceroute",
+          "required": false
+        }
+      }
+    },
+    "dns_lookup": {
+      "description": "Consulta DNS",
+      "examples": [
+        "dns lookup",
+        "consulta dns",
+        "resolver dns",
+        "dns"
+      ],
+      "response": "dns_lookup",
+      "parameters": {
+        "domain": {
+          "type": "string",
+          "description": "Domínio para consultar",
+          "required": false
+        }
+      }
+    },
+    "shutdown": {
+      "description": "Desligar sistema",
+      "examples": [
+        "desligar",
+        "shutdown",
+        "desligar sistema",
+        "power off"
+      ],
+      "response": "shutdown",
+      "parameters": {}
+    },
+    "reboot": {
+      "description": "Reiniciar sistema",
+      "examples": [
+        "reiniciar",
+        "reboot",
+        "restart",
+        "reiniciar sistema"
+      ],
+      "response": "reboot",
+      "parameters": {}
+    },
+    "sleep": {
+      "description": "Suspender sistema",
+      "examples": [
+        "suspender",
+        "sleep",
+        "dormir",
+        "hibernar"
+      ],
+      "response": "sleep",
+      "parameters": {}
+    }
+  },
+  "personality": {
+    "name": "Córtex",
+    "version": "1.0.0",
+    "creator": "Nana",
+    "tone": "professional",
+    "language": "pt-BR",
+    "greeting": "Olá! Sou o Córtex, seu assistente pessoal offline. Como posso ajudar hoje?",
+    "farewell": "Até logo! Foi um prazer ajudar.",
+    "error_message": "Desculpe, não entendi. Pode reformular?",
+    "confirmation_words": ["sim", "yes", "y", "claro", "com certeza", "ok"],
+    "negation_words": ["não", "no", "n", "nunca", "jamais"]
+  }
+}

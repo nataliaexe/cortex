@@ -1,0 +1,155 @@
+# Regras de segurança para Python
+# Baseado em OWASP e best practices
+
+python_eval:
+  type: dangerous_function
+  severity: critical
+  description: "Uso de eval() pode executar código arbitrário"
+  patterns:
+    - "eval("
+  remediation: "Evite eval(). Use ast.literal_eval() para literais ou refatore o código"
+
+python_exec:
+  type: dangerous_function
+  severity: critical
+  description: "Uso de exec() pode executar código arbitrário"
+  patterns:
+    - "exec("
+  remediation: "Evite exec(). Refatore o código para não executar strings como código"
+
+python_pickle:
+  type: dangerous_deserialization
+  severity: critical
+  description: "pickle.loads() pode executar código arbitrário"
+  patterns:
+    - "pickle.loads"
+    - "pickle.load"
+  remediation: "Use json para serialização ou libs seguras como yaml.safe_load"
+
+python_yaml_load:
+  type: dangerous_deserialization
+  severity: high
+  description: "yaml.load() pode executar código arbitrário"
+  patterns:
+    - "yaml.load"
+  remediation: "Use yaml.safe_load() em vez de yaml.load()"
+
+python_subprocess_shell:
+  type: command_injection
+  severity: high
+  description: "subprocess com shell=True pode permitir command injection"
+  patterns:
+    - "subprocess.*shell=True"
+  remediation: "Evite shell=True. Use lista de argumentos ou sanitize inputs"
+
+python_os_system:
+  type: command_injection
+  severity: high
+  description: "os.system() pode permitir command injection"
+  patterns:
+    - "os.system"
+  remediation: "Use subprocess com lista de argumentos em vez de os.system"
+
+python_sql_format:
+  type: sql_injection
+  severity: critical
+  description: "SQL usando format() ou f-strings é vulnerável a SQL injection"
+  patterns:
+    - "SELECT.*format("
+    - "INSERT.*format("
+    - "UPDATE.*format("
+    - "DELETE.*format("
+  remediation: "Use parameterized queries ou ORM"
+
+python_random:
+  type: weak_cryptography
+  severity: medium
+  description: "random module não é criptograficamente seguro"
+  patterns:
+    - "import random"
+    - "random.random"
+    - "random.seed"
+  remediation: "Use secrets module para criptografia"
+
+python_hashlib_md5:
+  type: weak_hash
+  severity: medium
+  description: "MD5 não é mais seguro para hashes"
+  patterns:
+    - "hashlib.md5"
+  remediation: "Use SHA-256 ou stronger (hashlib.sha256)"
+
+python_hashlib_sha1:
+  type: weak_hash
+  severity: medium
+  description: "SHA-1 não é mais seguro para hashes"
+  patterns:
+    - "hashlib.sha1"
+  remediation: "Use SHA-256 ou stronger (hashlib.sha256)"
+
+python_tempfile_mktemp:
+  type: insecure_temp_file
+  severity: medium
+  description: "tempfile.mktemp() é inseguro"
+  patterns:
+    - "tempfile.mktemp"
+  remediation: "Use tempfile.mkstemp() ou tempfile.NamedTemporaryFile()"
+
+python_hardcoded_password:
+  type: hardcoded_secrets
+  severity: high
+  description: "Senhas hardcoded no código"
+  patterns:
+    - "password.*=.*['\"]"
+    - "passwd.*=.*['\"]"
+    - "secret.*=.*['\"]"
+    - "api_key.*=.*['\"]"
+  remediation: "Use variáveis de ambiente ou arquivo de configuração"
+
+python_debug_true:
+  type: debug_mode
+  severity: low
+  description: "DEBUG=True em produção pode expor informações sensíveis"
+  patterns:
+    - "DEBUG.*=.*True"
+  remediation: "Use variáveis de ambiente para configuração de debug"
+
+python_flask_debug:
+  type: debug_mode
+  severity: high
+  description: "Flask debug mode em produção"
+  patterns:
+    - "app.run.*debug=True"
+  remediation: "Nunca use debug=True em produção"
+
+python_ssl_verify_false:
+  type: weak_ssl
+  severity: high
+  description: "SSL verification desabilitado"
+  patterns:
+    - "verify=False"
+  remediation: "Nunca desabilite verificação SSL em produção"
+
+python_import_os:
+  type: dangerous_import
+  severity: medium
+  description: "Import de os requer cuidados adicionais"
+  patterns:
+    - "import os"
+  remediation: "Esteja ciente de riscos de segurança ao usar os module"
+
+python_import_subprocess:
+  type: dangerous_import
+  severity: medium
+  description: "Import de subprocess requer cuidados adicionais"
+  patterns:
+    - "import subprocess"
+  remediation: "Valide e sanitize todos os inputs quando usar subprocess"
+
+python_import_pickle:
+  type: dangerous_import
+  severity: high
+  description: "Import de pickle requer cuidados adicionais"
+  patterns:
+    - "import pickle"
+  remediation: "Considere alternativas mais seguras para serialização"
