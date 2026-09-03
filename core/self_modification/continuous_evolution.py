@@ -18,8 +18,10 @@ class ContinuousEvolution:
     def __init__(self, config: Dict[str, Any]):
         self.logger = logging.getLogger(__name__)
         self.config = config
-        self.evolution_enabled = config.get("self_modification", {}).get("auto_evolution", False)
-        self.auto_evolution = config.get("self_modification", {}).get("auto_evolution", False)
+        iteration = config.get("self_modification", {}).get("capability_iteration", {})
+        # ``auto_evolution`` is retained only for backwards-compatible configs.
+        enabled = iteration.get("enabled", config.get("self_modification", {}).get("auto_evolution", False))
+        self.capability_iteration_enabled = enabled
         
         # Componentes
         self.capability_discovery = None
@@ -48,8 +50,8 @@ class ContinuousEvolution:
             
     async def start_evolution(self):
         """Inicia ciclo de evolução"""
-        if not self.evolution_enabled:
-            self.logger.info("Auto-evolução desabilitada")
+        if not self.capability_iteration_enabled:
+            self.logger.info("Iteração de capacidade desabilitada")
             return False
             
         self.is_running = True
@@ -86,11 +88,11 @@ class ContinuousEvolution:
                 # Log do plano
                 self.logger.info(f"Plano de melhorias: {len(improvement_plan['priority_high'])} alta prioridade")
                 
-                # Executa melhorias de alta prioridade se auto-evolução estiver habilitada
-                if self.auto_evolution:
+                # Applies changes only when capability iteration is explicitly enabled.
+                if self.capability_iteration_enabled:
                     await self._execute_improvements(improvement_plan)
                 else:
-                    self.logger.info("Auto-evolução desabilitada, apenas análise realizada")
+                    self.logger.info("Iteração de capacidade desabilitada, apenas análise realizada")
                     
                 # Aguarda próximo ciclo
                 await asyncio.sleep(self.evolution_interval)
@@ -191,8 +193,7 @@ class ContinuousEvolution:
         
         return {
             "is_running": self.is_running,
-            "auto_evolution": self.auto_evolution,
-            "evolution_enabled": self.evolution_enabled,
+            "capability_iteration_enabled": self.capability_iteration_enabled,
             "current_gaps": gaps,
             "last_evolution": datetime.now().isoformat() if self.is_running else None
         }
@@ -202,15 +203,15 @@ class ContinuousEvolution:
         self.evolution_interval = max(60, seconds)  # Mínimo 1 minuto
         self.logger.info(f"Intervalo de evolução definido para {self.evolution_interval} segundos")
         
-    async def enable_auto_evolution(self):
-        """Habilita auto-evolução"""
-        self.auto_evolution = True
-        self.logger.info("Auto-evolução habilitada")
+    async def enable_capability_iteration(self):
+        """Enables capability iteration for the current process only."""
+        self.capability_iteration_enabled = True
+        self.logger.info("Iteração de capacidade habilitada")
         
-    async def disable_auto_evolution(self):
-        """Desabilita auto-evolução"""
-        self.auto_evolution = False
-        self.logger.info("Auto-evolução desabilitada")
+    async def disable_capability_iteration(self):
+        """Disables capability iteration for the current process only."""
+        self.capability_iteration_enabled = False
+        self.logger.info("Iteração de capacidade desabilitada")
         
     async def cleanup(self):
         """Limpa recursos"""

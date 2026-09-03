@@ -11,7 +11,7 @@ A Gênesis Córtex é um assistente pessoal IA offline projetado para desenvolvi
 - **Linguagem Principal:** Python 3.12+
 - **LLM Local:** DeepSeek-R1-7B via Ollama
 - **Voice:** Vosk (STT) + Piper TTS (TTS)
-- **Memória:** SQLite (curto prazo) + LanceDB (longo prazo)
+- **Memória:** SQLite (armazenamento relacional local) + LanceDB (memória vetorial/semântica)
 - **Web:** FastAPI + PWA (HTML/CSS/JS)
 - **Containerização:** Docker/Podman
 
@@ -45,11 +45,11 @@ A Gênesis Córtex é um assistente pessoal IA offline projetado para desenvolvi
 - **conversation.py:** Gerenciador de conversação
 - **background_service.py:** Serviço 24/7
 
-#### 4. Self-Modification
+#### 4. Self-Modification / Autonomous System Maintenance
 - **capability_discovery.py:** Descoberta de lacunas no projeto
 - **safe_editor.py:** Editor seguro com backup/rollback
 - **sandbox_tester.py:** Testes em Docker antes de aplicar
-- **continuous_evolution.py:** Ciclo contínuo de auto-evolução
+- **continuous_evolution.py:** Iteração de capacidade; não treina pesos de LLM e permanece desabilitada por padrão
 
 #### 5. Web PWA
 - **app.py:** FastAPI server

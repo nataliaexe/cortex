@@ -72,6 +72,8 @@ class CortexEngine:
             )
         else:
             # Fallback para LLM
+            # Route model selection before generation; this does not grant tools.
+            context["model_profile"] = self.local_llm.router.select(user_input, context).profile
             response = await self.local_llm.generate_response(user_input, context)
             
         # 4. Armazenar interação

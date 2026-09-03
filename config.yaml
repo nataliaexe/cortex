@@ -15,8 +15,15 @@ llm:
   model: "deepseek-r1:7b"
   # Modelos locais esperados; o Cortex não faz download automático.
   models:
-    reasoning: "deepseek-r1:7b"
-    coding: "qwen2.5-coder:7b"
+    fast:
+      name: "qwen2.5-coder:7b"
+      max_tokens: 180
+    coding:
+      name: "qwen2.5-coder:7b"
+      max_tokens: 500
+    reasoning:
+      name: "deepseek-r1:7b"
+      max_tokens: 900
   api_url: "http://localhost:11434"
   timeout: 60
   generation:
@@ -41,14 +48,19 @@ voice:
 
 memory:
   knowledge_base_path: "knowledge_base"
-  short_term:
+  relational:
     type: "sqlite"
-    path: "data/short_term.db"
-    max_entries: 1000
-  long_term:
+    path: "data/cortex.db"
+    # Retenção é uma política da aplicação, não uma limitação do SQLite.
+    retention_days: 90
+  semantic:
     type: "lancedb"
     path: "data/long_term"
     embedding_model: "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+
+database:
+  engine: "sqlite"
+  path: "data/cortex.db"
 
 security:
   encryption:
@@ -71,7 +83,9 @@ web:
 
 self_modification:
   enabled: true
-  auto_evolution: false
+  # Isto não treina pesos de LLM. Propõe/valida mudanças no software.
+  capability_iteration:
+    enabled: false
   sandbox: true
   backup_before_changes: true
   evolution_interval: 3600

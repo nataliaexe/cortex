@@ -26,9 +26,9 @@ A Gênesis Córtex (apelido: Córtex / Cort / CTX) é uma **assistente pessoal e
 | **Voz (TTS)** | Piper TTS | Offline, vozes M/F (Luciana/Faber) |
 | **LLM Local** | DeepSeek-R1-7B via Ollama | Conversa fluida, raciocínio, offline |
 | **Busca Semântica** | Sentence-Transformers (MiniLM) | Matching de intenções além de palavras-chave |
-| **Memória Curto Prazo** | SQLite | Conversas recentes, estado da sessão |
-| **Memória Longo Prazo** | LanceDB (vetorial) | Embeddings, busca semântica |
-| **Comunicação** | Redis (localhost) | Pub/sub entre módulos |
+| **Armazenamento relacional local** | SQLite | Usuários, sessões, conversas, tarefas, execuções, scans e auditoria |
+| **Memória semântica** | LanceDB (vetorial) | Embeddings, busca semântica e conhecimento |
+| **Estado temporário** | Redis (localhost) | Cache, filas, pub/sub e estado efêmero |
 | **Containerização** | Docker/Podman | Sandbox de auto-evolução |
 | **Interface** | PWA (FastAPI + HTML/CSS/JS) | Dashboard local |
 
@@ -51,6 +51,14 @@ cortex/
 │       ├── safe_editor.py
 │       ├── sandbox_tester.py
 │       └── continuous_evolution.py
+├── database/                      # Persistência relacional local
+│   ├── connection.py               # Conexão SQLite e aplicação de migrações
+│   ├── migrations/                 # Schema versionado
+│   └── repositories/               # Acesso a dados sem SQL nas rotas
+├── api/                            # API HTTP organizada
+│   ├── routes/                     # Chat, tarefas, segurança e sistema
+│   ├── schemas/                    # Contratos Pydantic
+│   └── services/                   # Política entre intenção e execução
 ├── security/                      # Módulos de segurança
 │   ├── universal_scanner.py       # Scanner multi-linguagem
 │   ├── binary_analyzer.py         # Análise de ELF/PE estática
@@ -104,6 +112,21 @@ cortex/
 ├── docker-compose.yml             # Orquestração
 └── README.md                      # Este arquivo
 ```
+
+### Dados, governança e execução
+
+SQLite é armazenamento relacional persistente local; o prazo de retenção é uma regra da aplicação. LanceDB permanece reservado à memória vetorial e Redis a cache, filas e estado temporário.
+
+Toda ação deve seguir a cadeia abaixo. O LLM interpreta intenção e plano, mas não executa ferramentas diretamente:
+
+```
+Request → LLM/plano → Policy Engine → confirmação humana (se necessária)
+        → executor/ferramenta → audit_events + logs/audit.jsonl
+```
+
+O schema inicial inclui `users`, `sessions`, `conversations`, `messages`, `projects`, `tasks`, `confirmations`, `executions`, `security_scans`, `findings`, `permissions`, `audit_events` e `system_settings`. A primeira inicialização cria `data/cortex.db`, que pode ser aberto no DBeaver com o driver SQLite.
+
+Endpoints operacionais: `GET /api/health`, `GET /api/status`, `GET /api/metrics`, `GET /api/models/status`, `GET /api/governance/status`, `GET /api/audit-events`, `POST /api/chat` e `POST /api/tasks`.
 
 ## 🚀 Instalação e Uso
 
@@ -190,12 +213,17 @@ docker-compose up -d
 - **Wake Word:** Detecção "Ei Córtex"
 - **Background:** Serviço 24/7
 
-### Auto-Evolução
+### Self-Modification / Autonomous System Maintenance
 
+- **Capacidade iterativa (desabilitada por padrão):** análise e proposta de melhorias; não é treinamento nem fine-tuning de LLM.
 - **Descoberta de lacunas:** Análise de PROJETO.md vs implementação
 - **Editor seguro:** Backup automático + rollback
 - **Sandbox:** Testes em Docker antes de aplicar
 - **Evolução contínua:** Ciclo automático de melhorias
+
+### Roteamento de modelos
+
+Antes da geração, o `ModelRouter` seleciona o perfil: `fast` e `coding` usam Qwen Coder; solicitações explicitamente complexas usam DeepSeek R1. O roteador não chama ferramentas: qualquer ação continua passando por análise de intenção, governança, confirmação humana e executor.
 
 ### Dashboard PWA
 

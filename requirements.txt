@@ -35,7 +35,7 @@ jinja2>=3.1.0
 python-multipart>=0.0.6
 
 # Database
-sqlite3  # Built-in
+# sqlite3 is part of Python's standard library; no pip dependency is needed.
 # lancedb>=0.3.0  # Opcional para memória vetorial
 
 # Development/Testing

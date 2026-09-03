@@ -142,7 +142,9 @@ class ConfigLoader:
             },
             "self_modification": {
                 "enabled": True,
-                "auto_evolution": False,
+                "capability_iteration": {
+                    "enabled": False
+                },
                 "sandbox": True,
                 "backup_before_changes": True
             },
