@@ -1,4 +1,4 @@
-# PROJETO GÊNESIS CÓRTEX
+# PROJETO CÓRTEX
 
 ## Descrição do Projeto
 
@@ -192,7 +192,7 @@ python web/app.py
 
 ## Metas e Roadmap
 
-### Concluído ✅
+### Concluído 
 - [x] Motor de regras com 40+ ações
 - [x] Scanner de segurança multi-linguagem
 - [x] Análise de binários
@@ -202,12 +202,12 @@ python web/app.py
 - [x] Auto-evolução básica
 - [x] Base de conhecimento
 
-### Em Progresso 🚧
+### Em Progresso 
 - [ ] Integração EEG real
 - [ ] Auto-correção de vulnerabilidades
 - [ ] Interface PWA avançada
 
-### Futuro 🔮
+### Futuro 
 - [ ] App mobile (PWA instalável)
 - [ ] IA comportamental avançada
 - [ ] Previsão de ataques
