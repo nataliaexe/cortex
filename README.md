@@ -3,7 +3,7 @@
 **Status:** Funcional (em evolução contínua)  
 **Arquitetura:** Híbrida (Motor de Regras + LLM Local + Memória Vetorial + Auto-Evolução)
 
-## 🌟 Visão Geral
+## Visão Geral
 
 A Gênesis Córtex (apelido: Córtex / Cort / CTX) é uma **assistente pessoal e ferramenta de programação e cybersecurity offline** projetada para:
 
@@ -15,7 +15,7 @@ A Gênesis Córtex (apelido: Córtex / Cort / CTX) é uma **assistente pessoal e
 
 **Princípio fundamental:** 100% offline, privada, sem filtros corporativos, sem APIs pagas.
 
-## 🏗️ Arquitetura Técnica
+## Arquitetura Técnica
 
 ### Stack Principal
 
@@ -32,7 +32,7 @@ A Gênesis Córtex (apelido: Córtex / Cort / CTX) é uma **assistente pessoal e
 | **Containerização** | Docker/Podman | Sandbox de auto-evolução |
 | **Interface** | PWA (FastAPI + HTML/CSS/JS) | Dashboard local |
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 cortex/
@@ -128,7 +128,7 @@ O schema inicial inclui `users`, `sessions`, `conversations`, `messages`, `proje
 
 Endpoints operacionais: `GET /api/health`, `GET /api/status`, `GET /api/metrics`, `GET /api/models/status`, `GET /api/governance/status`, `GET /api/audit-events`, `POST /api/chat` e `POST /api/tasks`.
 
-## 🚀 Instalação e Uso
+## Instalação e Uso
 
 ### Pré-requisitos
 
@@ -188,7 +188,7 @@ python web/app.py
 docker-compose up -d
 ```
 
-## 🔧 Funcionalidades
+## Funcionalidades
 
 ### Motor de Regras (40+ ações)
 
@@ -244,7 +244,7 @@ Antes da geração, o `ModelRouter` seleciona o perfil: `fast` e `coding` usam Q
   - **PARTIAL:** Funcionalidades de assistente pessoal, web, conhecimento e diagnóstico
   - **PLANNED:** Recursos avançados de backup, autenticação e interfaces completas
 
-## 🔒 Segurança
+## Segurança
 
 - **Criptografia:** AES-256-GCM para dados sensíveis via secure_storage (não criptografa o arquivo SQLite inteiro)
 - **Sandbox:** Docker para auto-evolução com propriedades de isolamento (sem rede, limites de CPU/memória, filesystem read-only, sem privilégios)
@@ -278,7 +278,7 @@ ollama pull deepseek-r1:7b
 ollama pull qwen2.5-coder:7b
 ```
 
-## 🧱 Roadmap Futuro
+## Roadmap Futuro
 
 | Prioridade | Funcionalidade |
 |------------|----------------|
@@ -288,11 +288,11 @@ ollama pull qwen2.5-coder:7b
 | Média | Auto-correção de vulnerabilidades |
 | Baixa | App mobile (PWA instalável) |
 
-## 📝 Licença
+## Licença
 
 Este projeto é mantido por Nana e segue princípios de software livre e privacidade digital.
 
-## 🤝 Contribuindo
+## Contribuindo
 
 Contribuições são bem-vindas! Por favor:
 
@@ -302,10 +302,7 @@ Contribuições são bem-vindas! Por favor:
 4. Push para a branch
 5. Abra um Pull Request
 
-## 📞 Suporte
+## Suporte
 
 Para suporte, consulte a documentação em `PROJETO.md` ou abra uma issue no repositório.
 
----
-
-**Voto de Minerva:** SEMPRE da criadora.
