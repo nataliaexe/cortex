@@ -5,7 +5,7 @@ Protocolo de decisão 50/50 para escolha entre motor de regras e LLM
 """
 
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 
 class DecisionProtocol:

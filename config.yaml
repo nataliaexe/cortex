@@ -129,6 +129,9 @@ privacy:
   offline_mode: true
   data_retention_days: 90
   anonymize_logs: true
+  # Nota: encryption_at_rest se aplica a dados sensíveis via secure_storage,
+  # não ao arquivo SQLite inteiro. Para criptografia completa do banco,
+  # seria necessário usar SQLCipher ou similar.
   encryption_at_rest: true
 
 # Governança central: toda ação passa por esta política e gera auditoria.

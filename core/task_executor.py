@@ -46,8 +46,7 @@ class TaskExecutor:
             "create_directory": self.create_directory,
             
             # Ações de assistente pessoal
-            "set_volume": self.set_volume,
-            "set_brightness": self.set_brightness,
+            # NOTA: set_volume e set_brightness movidos para SystemActions
             "create_note": self.create_note,
             "list_notes": self.list_notes,
             "set_timer": self.set_timer,
@@ -243,17 +242,8 @@ class TaskExecutor:
             return f"Erro ao criar diretório: {e}"
             
     # Ações de assistente pessoal
-    async def set_volume(self, params: Dict, context: Dict) -> str:
-        """Define volume do sistema"""
-        level = params.get("level", 50)
-        # Implementação depende do sistema operacional
-        return f"Volume definido para {level}% (implementação dependente do SO)"
-        
-    async def set_brightness(self, params: Dict, context: Dict) -> str:
-        """Define brilho da tela"""
-        level = params.get("level", 50)
-        # Implementação depende do sistema operacional
-        return f"Brilho definido para {level}% (implementação dependente do SO)"
+    # NOTA: Volume e brilho movidos para SystemActions para evitar duplicação
+    # Use SystemActions.set_volume() e SystemActions.set_brightness() diretamente
         
     async def create_note(self, params: Dict, context: Dict) -> str:
         """Cria uma nota"""
@@ -485,42 +475,59 @@ class TaskExecutor:
         
     # Ações de rede
     async def ping_host(self, params: Dict, context: Dict) -> str:
-        """Ping em host"""
-        host = params.get("host", "8.8.8.8")
+        """Ping em host - requer host explicitamente especificado"""
+        host = params.get("host")
+        if not host:
+            return "Erro: host deve ser especificado explicitamente (sem default público)"
         try:
+            # Autoriza alvo conforme configuração de rede
+            self.network._authorize_target(host)
             result = subprocess.run(
                 ["ping", "-c", "4", host],
                 capture_output=True,
                 text=True,
-                timeout=10
+                timeout=10,
+                shell=False
             )
             return result.stdout
+        except PermissionError as e:
+            return f"Erro de permissão: {e}"
         except Exception as e:
             return f"Erro ao pingar {host}: {e}"
-            
+
     async def trace_route(self, params: Dict, context: Dict) -> str:
-        """Rota até host"""
-        host = params.get("host", "8.8.8.8")
+        """Rota até host - requer host explicitamente especificado"""
+        host = params.get("host")
+        if not host:
+            return "Erro: host deve ser especificado explicitamente (sem default público)"
         try:
+            # Autoriza alvo conforme configuração de rede
+            self.network._authorize_target(host)
             result = subprocess.run(
                 ["traceroute", host],
                 capture_output=True,
                 text=True,
-                timeout=30
+                timeout=30,
+                shell=False
             )
             return result.stdout
+        except PermissionError as e:
+            return f"Erro de permissão: {e}"
         except Exception as e:
             return f"Erro ao traceroute {host}: {e}"
-            
+
     async def dns_lookup(self, params: Dict, context: Dict) -> str:
-        """Consulta DNS"""
-        domain = params.get("domain", "google.com")
+        """Consulta DNS - requer domain explicitamente especificado"""
+        domain = params.get("domain")
+        if not domain:
+            return "Erro: domain deve ser especificado explicitamente (sem default público)"
         try:
             result = subprocess.run(
                 ["nslookup", domain],
                 capture_output=True,
                 text=True,
-                timeout=10
+                timeout=10,
+                shell=False
             )
             return result.stdout
         except Exception as e:

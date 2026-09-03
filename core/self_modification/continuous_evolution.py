@@ -154,19 +154,29 @@ class ContinuousEvolution:
     async def manual_evolution(self, file_path: str, new_content: str, description: str = "") -> Dict[str, Any]:
         """Executa evolução manual com validação"""
         try:
+            # Lê o conteúdo atual do arquivo para verificação
+            file_path_obj = Path(file_path)
+            if not file_path_obj.exists():
+                return {
+                    "success": False,
+                    "message": f"Arquivo {file_path} não existe"
+                }
+
+            current_content = file_path_obj.read_text(encoding='utf-8')
+
             # Testa mudança
             test_results = await self.sandbox_tester.comprehensive_test(file_path, new_content)
-            
+
             if not test_results["overall_success"]:
                 return {
                     "success": False,
                     "message": "Testes falharam",
                     "test_results": test_results
                 }
-                
-            # Aplica mudança com backup
-            success = await self.safe_editor.edit_file(file_path, "", new_content, description)
-            
+
+            # Aplica mudança com backup usando o conteúdo atual
+            success = await self.safe_editor.edit_file(file_path, current_content, new_content, description)
+
             if success:
                 return {
                     "success": True,
@@ -179,7 +189,7 @@ class ContinuousEvolution:
                     "message": "Erro ao aplicar mudança",
                     "test_results": test_results
                 }
-                
+
         except Exception as e:
             self.logger.error(f"Erro na evolução manual: {e}")
             return {

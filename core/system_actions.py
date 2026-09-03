@@ -135,13 +135,13 @@ class SystemActions:
         """Abre uma aplicação"""
         try:
             if self.os_type == "Linux":
-                subprocess.run(["xdg-open", app_name], check=True)
+                subprocess.run(["xdg-open", app_name], check=True, shell=False)
                 return True
             elif self.os_type == "Darwin":
-                subprocess.run(["open", "-a", app_name], check=True)
+                subprocess.run(["open", "-a", app_name], check=True, shell=False)
                 return True
             elif self.os_type == "Windows":
-                subprocess.run(["start", app_name], shell=True, check=True)
+                subprocess.run(["cmd", "/c", "start", "", app_name], check=True, shell=False)
                 return True
             return False
         except Exception as e:
@@ -175,36 +175,14 @@ class SystemActions:
             return False
             
     async def execute_command(self, command: str, timeout: int = 30) -> Dict[str, Any]:
-        """Executa comando do sistema"""
-        try:
-            result = subprocess.run(
-                command,
-                shell=True,
-                capture_output=True,
-                text=True,
-                timeout=timeout
-            )
-            
-            return {
-                "success": result.returncode == 0,
-                "stdout": result.stdout,
-                "stderr": result.stderr,
-                "returncode": result.returncode
-            }
-        except subprocess.TimeoutExpired:
-            return {
-                "success": False,
-                "stdout": "",
-                "stderr": "Command timeout",
-                "returncode": -1
-            }
-        except Exception as e:
-            return {
-                "success": False,
-                "stdout": "",
-                "stderr": str(e),
-                "returncode": -1
-            }
+        """Executa comando do sistema - DEPRECATED: Use ComputerControl.run_command via TaskExecutor"""
+        self.logger.warning("SystemActions.execute_command está depreciado. Use TaskExecutor.execute_command com ComputerControl")
+        return {
+            "success": False,
+            "stdout": "",
+            "stderr": "Método depreciado - use TaskExecutor.execute_command com argv",
+            "returncode": -1
+        }
             
     async def get_system_uptime(self) -> str:
         """Obtém tempo de atividade do sistema"""

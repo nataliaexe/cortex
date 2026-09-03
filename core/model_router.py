@@ -17,8 +17,9 @@ class ModelSelection:
 
 
 class ModelRouter:
-    CODING_WORDS = ("código", "code", "python", "javascript", "teste", "bug", "git", "refator", "função", "api")
-    REASONING_WORDS = ("planeje", "planejamento", "analise profundamente", "passo a passo", "arquitetura", "ameaça", "vulnerabilidade", "decisão", "estratégia")
+    CODING_WORDS = ("código", "code", "python", "javascript", "teste", "bug", "git", "refator", "função", "api", "script", "programação", "desenvolvimento", "implementação")
+    REASONING_WORDS = ("planeje", "planejamento", "analise profundamente", "passo a passo", "arquitetura", "ameaça", "vulnerabilidade", "decisão", "estratégia", "avaliação", "revisão", "análise crítica")
+    COMPLEXITY_INDICATORS = ("multi", "vários", "complexo", "integrado", "sistema", "plataforma", "completo", "completa", "compreensivo")
 
     def __init__(self, config: dict[str, Any]):
         llm = config.get("llm", {})
@@ -46,7 +47,28 @@ class ModelRouter:
         return ModelSelection(profile, settings["name"], int(settings["max_tokens"]))
 
     def _classify(self, text: str) -> str:
+        """Classificação mais robusta considerando múltiplos fatores"""
         lowered = text.lower()
-        if any(word in lowered for word in self.REASONING_WORDS): return "reasoning"
-        if any(word in lowered for word in self.CODING_WORDS): return "coding"
+
+        # Conta palavras-chave por categoria
+        reasoning_score = sum(1 for word in self.REASONING_WORDS if word in lowered)
+        coding_score = sum(1 for word in self.CODING_WORDS if word in lowered)
+        complexity_score = sum(1 for word in self.COMPLEXITY_INDICATORS if word in lowered)
+
+        # Calcula comprimento e complexidade do texto
+        text_length = len(text.split())
+        is_long_query = text_length > 20
+
+        # Lógica de decisão ponderada
+        if reasoning_score >= 2 or (reasoning_score >= 1 and complexity_score >= 1):
+            return "reasoning"
+        if reasoning_score >= 1 and is_long_query:
+            return "reasoning"
+        if coding_score >= 2 or (coding_score >= 1 and complexity_score >= 1):
+            return "coding"
+        if coding_score >= 1:
+            return "coding"
+        if complexity_score >= 2:
+            return "reasoning"
+
         return "fast"

@@ -19,6 +19,7 @@ class SemanticMatcher:
         self.model = None
         self.intents_db = {}
         self.threshold = 0.65
+        self.intent_embeddings_cache = {}  # Cache de embeddings por intent
         
     async def initialize(self):
         """Inicializa o modelo e carrega intenções"""
@@ -41,39 +42,58 @@ class SemanticMatcher:
             self.model = None
             
     async def _load_intents(self):
-        """Carrega base de intenções"""
+        """Carrega base de intenções e pré-calcula embeddings"""
         intents_path = Path("personality/base_training.json")
         if intents_path.exists():
             with open(intents_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 self.intents_db = data.get("intents", {})
+
+            # Pré-calcula embeddings para todos os exemplos de todas as intents
+            if self.model:
+                self.logger.info("Pré-calculando embeddings para intenções...")
+                for intent_name, intent_data in self.intents_db.items():
+                    examples = intent_data.get("examples", [])
+                    if examples:
+                        try:
+                            embeddings = self.model.encode(examples)
+                            self.intent_embeddings_cache[intent_name] = embeddings
+                        except Exception as e:
+                            self.logger.warning(f"Erro ao calcular embeddings para intent {intent_name}: {e}")
+
             self.logger.info(f"{len(self.intents_db)} intenções carregadas")
         else:
             self.logger.warning("Arquivo de intenções não encontrado")
             
     async def match(self, user_input: str) -> Dict[str, Any]:
         """Realiza matching semântico da entrada do usuário"""
-        
+
         if not self.model:
             return self._fallback_match(user_input)
-            
+
         try:
-            # Calcula embeddings
+            # Calcula embedding apenas para a entrada do usuário
             input_embedding = self.model.encode([user_input])
-            
+
             best_match = None
             best_score = 0
-            
+
             for intent_name, intent_data in self.intents_db.items():
-                examples = intent_data.get("examples", [])
-                if not examples:
-                    continue
-                    
+                # Usa embeddings cacheados se disponíveis, senão calcula
+                if intent_name in self.intent_embeddings_cache:
+                    example_embeddings = self.intent_embeddings_cache[intent_name]
+                else:
+                    examples = intent_data.get("examples", [])
+                    if not examples:
+                        continue
+                    example_embeddings = self.model.encode(examples)
+                    # Cacheia para futuras chamadas
+                    self.intent_embeddings_cache[intent_name] = example_embeddings
+
                 # Calcula similaridade com exemplos
-                example_embeddings = self.model.encode(examples)
                 similarities = self._cosine_similarity(input_embedding, example_embeddings)
                 max_similarity = similarities.max()
-                
+
                 if max_similarity > best_score:
                     best_score = max_similarity
                     best_match = {
@@ -81,7 +101,7 @@ class SemanticMatcher:
                         "confidence": float(max_similarity),
                         "parameters": self._extract_parameters(user_input, intent_data)
                     }
-                    
+
             if best_match and best_match["confidence"] > self.threshold:
                 return best_match
             else:
@@ -90,7 +110,7 @@ class SemanticMatcher:
                     "confidence": 0.0,
                     "parameters": {}
                 }
-                
+
         except Exception as e:
             self.logger.error(f"Erro no matching semântico: {e}")
             return self._fallback_match(user_input)

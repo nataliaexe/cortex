@@ -201,10 +201,11 @@ docker-compose up -d
 
 ### Scanner de Segurança
 
-- **Multi-linguagem:** Python, Java, JavaScript, C/C++, Go, Rust, Assembly
+- **Analisador estático de segurança com regras heurísticas específicas por linguagem:** Python, Java, JavaScript, C/C++, Go, Rust, Assembly
 - **Análise de binários:** ELF, PE, Mach-O
-- **Verificação de dependências:** OSV local para CVEs
+- **Verificação de dependências:** OSV local para CVEs conhecidas
 - **Relatórios:** Markdown com SHA-256
+- **Nota:** O scanner usa regras heurísticas baseadas em padrões estáticos e não confirma necessariamente vulnerabilidades exploráveis. Requer análise humana para confirmação.
 
 ### Sistema de Voz
 
@@ -235,17 +236,21 @@ Antes da geração, o `ModelRouter` seleciona o perfil: `fast` e `coding` usam Q
 ## 📊 Estatísticas do Projeto
 
 - **Arquivos Python:** 20+ módulos
-- **Regras de segurança:** 7 linguagens, 300+ regras
+- **Regras de segurança:** 7 linguagens, 300+ regras heurísticas
 - **Intenções:** 102+ intents treinadas
 - **Linhas de código:** ~15,000
-- **Funcionalidades:** 50+ ações implementadas
+- **Status de funcionalidades:** Ver IMPLEMENTATION_STATUS.md para detalhes
+  - **IMPLEMENTED:** Ações críticas de sistema, arquivos, segurança, rede e governança
+  - **PARTIAL:** Funcionalidades de assistente pessoal, web, conhecimento e diagnóstico
+  - **PLANNED:** Recursos avançados de backup, autenticação e interfaces completas
 
 ## 🔒 Segurança
 
-- **Criptografia:** AES-256-GCM para memórias
-- **Sandbox:** Docker para auto-evolução
+- **Criptografia:** AES-256-GCM para dados sensíveis via secure_storage (não criptografa o arquivo SQLite inteiro)
+- **Sandbox:** Docker para auto-evolução com propriedades de isolamento (sem rede, limites de CPU/memória, filesystem read-only, sem privilégios)
 - **Offline-first:** Sem APIs externas
 - **Privacidade:** Dados locais apenas
+- **Nota:** Para criptografia completa do banco de dados, seria necessário usar SQLCipher ou solução similar
 
 ### Governança de ferramentas
 

@@ -144,8 +144,9 @@ class InternetTools:
             raise PermissionError("Acesso à internet está desabilitado na configuração.")
         if parsed.scheme not in {"http", "https"} or not parsed.hostname:
             raise ValueError("URL deve usar HTTP(S) e possuir host.")
-        if self.allowed_hosts and parsed.hostname not in self.allowed_hosts:
-            raise PermissionError("Host não está na lista autorizada.")
+        # Default deny: allowed_hosts vazio significa nenhum host permitido
+        if parsed.hostname not in self.allowed_hosts:
+            raise PermissionError(f"Host '{parsed.hostname}' não está na lista autorizada. Configure internet.allowed_hosts explicitamente.")
 
     async def request(self, url: str, method: str = "GET") -> Dict[str, Any]:
         self._validate_url(url)

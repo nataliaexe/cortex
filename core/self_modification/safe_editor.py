@@ -42,12 +42,13 @@ class SafeEditor:
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 current_content = f.read()
-                
+
             if old_content not in current_content:
-                self.logger.warning("Conteúdo original não corresponde ao atual")
+                self.logger.error("Conteúdo original não corresponde ao atual - edição abortada")
                 if self.backup_enabled:
                     self.logger.info("Backup mantido para segurança")
-                    
+                return False
+
         except Exception as e:
             self.logger.error(f"Erro ao verificar conteúdo atual: {e}")
             return False

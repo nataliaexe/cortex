@@ -52,18 +52,20 @@ class CortexEngine:
         
     async def process_input(self, user_input: str, context: Optional[Dict[str, Any]] = None) -> str:
         """Processa entrada do usuário e retorna resposta"""
-        
+
         # 1. Análise situacional
         context = context or {}
         context.update(await self.situational_awareness.analyze_context(user_input))
         # Retrieved local facts are supplied to the LLM, never sent to a remote service.
         context["knowledge_matches"] = self.knowledge_base.search(user_input, limit=3)
-        
+
         # 2. Matching semântico
         semantic_result = await self.semantic_matcher.match(user_input)
-        
-        # 3. Protocolo de decisão
-        if semantic_result.confidence > 0.65:
+
+        # 3. Protocolo de decisão (agora usando DecisionProtocol)
+        decision = await self.decision_protocol.decide(semantic_result, context)
+
+        if decision == "rules":
             # Resposta do motor de regras
             response = await self.task_executor.execute_intent(
                 semantic_result.intent,
@@ -75,10 +77,10 @@ class CortexEngine:
             # Route model selection before generation; this does not grant tools.
             context["model_profile"] = self.local_llm.router.select(user_input, context).profile
             response = await self.local_llm.generate_response(user_input, context)
-            
+
         # 4. Armazenar interação
         await self.secure_storage.store_interaction(user_input, response, context)
-        
+
         return response
     
     async def start(self):

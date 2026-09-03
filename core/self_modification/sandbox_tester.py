@@ -99,26 +99,35 @@ class SandboxTester:
             }
             
     def _create_test_dockerfile(self, test_dir: Path) -> Path:
-        """Cria Dockerfile para teste"""
+        """Cria Dockerfile para teste com propriedades de isolamento"""
         dockerfile = test_dir / "Dockerfile"
-        
+
         dockerfile_content = """FROM python:3.12-slim
+
+# Cria usuário não-root para segurança
+RUN useradd -m -u 1000 testuser
 
 WORKDIR /app
 
 # Instala dependências básicas
-RUN pip install pytest
+RUN pip install --no-cache-dir pytest
 
 # Copia arquivo de teste
 COPY *.py .
 
+# Define usuário não-root
+USER testuser
+
+# Limita permissões do sistema de arquivos
+RUN chmod -R 555 /app && chmod -R 755 /app
+
 # Comando padrão
 CMD ["python", "-m", "pytest", "-v"]
 """
-        
+
         with open(dockerfile, 'w', encoding='utf-8') as f:
             f.write(dockerfile_content)
-            
+
         return dockerfile
         
     async def _build_docker_image(self, dockerfile: Path, image_name: str) -> Dict[str, Any]:
@@ -148,15 +157,35 @@ CMD ["python", "-m", "pytest", "-v"]
             }
             
     async def _run_docker_command(self, image_name: str, command: str) -> Dict[str, Any]:
-        """Executa comando em container Docker"""
+        """Executa comando em container Docker com propriedades de isolamento"""
         try:
+            # Flags de isolamento:
+            # --rm: Remove container automaticamente
+            # --network=none: Sem rede para segurança
+            # --memory=512m: Limite de memória
+            # --cpus=0.5: Limite de CPU
+            # --read-only: Filesystem read-only (exceto volumes temporários)
+            # --cap-drop=ALL: Remove todas as capabilities
+            # --security-opt=no-new-privileges: Previne escalada de privilégios
+            docker_run_cmd = [
+                "docker", "run", "--rm",
+                "--network=none",
+                "--memory=512m",
+                "--cpus=0.5",
+                "--read-only",
+                "--cap-drop=ALL",
+                "--security-opt=no-new-privileges",
+                "--tmpfs=/tmp:rw,noexec,nosuid,size=100m",
+                image_name
+            ] + command.split()
+
             result = subprocess.run(
-                ["docker", "run", "--rm", image_name] + command.split(),
+                docker_run_cmd,
                 capture_output=True,
                 text=True,
                 timeout=60
             )
-            
+
             return {
                 "success": result.returncode == 0,
                 "command": command,
@@ -164,7 +193,7 @@ CMD ["python", "-m", "pytest", "-v"]
                 "stderr": result.stderr,
                 "returncode": result.returncode
             }
-            
+
         except subprocess.TimeoutExpired:
             return {
                 "success": False,

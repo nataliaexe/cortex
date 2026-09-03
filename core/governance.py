@@ -33,6 +33,11 @@ class Governance:
     }
     BLOCKED_COMMANDS = {"rm", "mkfs", "dd", "shutdown", "reboot", "poweroff", "halt"}
 
+    # Actions that require parameter validation
+    PARAMETER_VALIDATION_ACTIONS = {
+        "ping_host", "trace_route", "dns_lookup", "download_file", "http_request"
+    }
+
     def __init__(self, config: Dict[str, Any]):
         self.logger = logging.getLogger(__name__)
         settings = config.get("governance", {})
@@ -48,10 +53,18 @@ class Governance:
         context = context or {}
         if self.allowed_actions and action not in self.allowed_actions:
             return Authorization(False, False, "Ação não está na lista permitida pela política.")
+
+        # Validate parameters for sensitive actions FIRST (before confirmation check)
+        if action in self.PARAMETER_VALIDATION_ACTIONS:
+            validation_error = self._validate_action_parameters(action, params)
+            if validation_error:
+                return Authorization(False, False, f"Parâmetros inválidos: {validation_error}")
+
         if action in self.confirmation_actions and self.require_confirmation:
             confirmed = set(context.get("confirmed_actions", []))
             if action not in confirmed and "*" not in confirmed:
                 return Authorization(False, True, "Ação altera o sistema, dados ou rede e requer confirmação humana.")
+
         return Authorization(True, False, "Permitida pela política local.")
 
     def ensure_path(self, value: str | Path, *, must_exist: bool = False) -> Path:
@@ -86,3 +99,31 @@ class Governance:
             "confirmation_actions": sorted(self.confirmation_actions),
             "audit_log": str(self.audit_path),
         }
+
+    def _validate_action_parameters(self, action: str, params: Dict[str, Any]) -> Optional[str]:
+        """Valida parâmetros para ações específicas"""
+        if action in ("ping_host", "trace_route"):
+            return self._validate_network_target(params.get("host"))
+        elif action == "dns_lookup":
+            return self._validate_domain(params.get("domain"))
+        elif action in ("download_file", "http_request"):
+            return self._validate_url(params.get("url"))
+        return None
+
+    def _validate_network_target(self, host: Any) -> Optional[str]:
+        """Valida que host foi especificado explicitamente (sem default público)"""
+        if not host:
+            return "host deve ser especificado explicitamente"
+        return None
+
+    def _validate_domain(self, domain: Any) -> Optional[str]:
+        """Valida que domain foi especificado explicitamente (sem default público)"""
+        if not domain:
+            return "domain deve ser especificado explicitamente"
+        return None
+
+    def _validate_url(self, url: Any) -> Optional[str]:
+        """Valida URL básica"""
+        if not url:
+            return "url deve ser especificada"
+        return None
