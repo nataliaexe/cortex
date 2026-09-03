@@ -233,7 +233,7 @@ Antes da geração, o `ModelRouter` seleciona o perfil: `fast` e `coding` usam Q
 - **Offline-first:** Service Worker + manifest
 - **Responsivo:** Mobile-friendly
 
-## 📊 Estatísticas do Projeto
+## Estatísticas do Projeto
 
 - **Arquivos Python:** 20+ módulos
 - **Regras de segurança:** 7 linguagens, 300+ regras heurísticas
