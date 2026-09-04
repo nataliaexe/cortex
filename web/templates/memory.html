@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Córtex - Memória & Aprendizado</title>
+    <meta name="theme-color" content="#0a0a1a">
+    <link rel="stylesheet" href="/static/themes.css">
+    <link rel="stylesheet" href="/static/memory.css">
+</head>
+<body class="theme-neural-synapse">
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="brand-icon">🧠</div>
+                <div class="brand-text">
+                    <h1>Memória & Aprendizado</h1>
+                    <span class="learning-status" id="learningStatus">Learning: Disabled</span>
+                </div>
+            </div>
+            <div class="header-controls">
+                <button class="header-button" id="enableLearningButton">▶️ Habilitar Learning</button>
+                <button class="header-button" id="runCycleButton">🔄 Executar Ciclo</button>
+                <button class="header-button" id="backButton">← Voltar</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="memory-container">
+            <!-- Learning Timeline -->
+            <section class="timeline-section">
+                <div class="section-header">
+                    <h3>Linha do Tempo de Aprendizado</h3>
+                    <span class="section-badge" id="cycleCount">0 Ciclos</span>
+                </div>
+                <div class="timeline" id="learningTimeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">2026-09-04 14:30</span>
+                            <span class="timeline-title">Ciclo de Aprendizado #1</span>
+                            <span class="timeline-description">Identificou 3 padrões de erro em logs</span>
+                            <span class="timeline-stats">+2 melhorias aplicadas</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">2026-09-04 12:15</span>
+                            <span class="timeline-title">Descoberta de Capacidade</span>
+                            <span class="timeline-description">Lacuna encontrada: implementação de Evolution Agent</span>
+                            <span class="timeline-stats">+1 proposta gerada</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">2026-09-04 10:00</span>
+                            <span class="timeline-title">Inicialização do Sistema</span>
+                            <span class="timeline-description">Sistema de memória vetorial iniciado</span>
+                            <span class="timeline-stats">Base de conhecimento carregada</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Knowledge Base -->
+            <section class="knowledge-section">
+                <div class="section-header">
+                    <h3>Base de Conhecimento</h3>
+                    <span class="section-badge" id="knowledgeCount">0 Itens</span>
+                </div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-card">
+                        <div class="knowledge-header">
+                            <span class="knowledge-icon">🧬</span>
+                            <span class="knowledge-category">Neurociência</span>
+                        </div>
+                        <div class="knowledge-stats">
+                            <span class="knowledge-stat">Artigos: <strong>156</strong></span>
+                            <span class="knowledge-stat">Tópicos: <strong>23</strong></span>
+                        </div>
+                        <button class="knowledge-button">Explorar</button>
+                    </div>
+                    <div class="knowledge-card">
+                        <div class="knowledge-header">
+                            <span class="knowledge-icon">🤖</span>
+                            <span class="knowledge-category">Robótica</span>
+                        </div>
+                        <div class="knowledge-stats">
+                            <span class="knowledge-stat">Componentes: <strong>89</strong></span>
+                            <span class="knowledge-stat">Sistemas: <strong>12</strong></span>
+                        </div>
+                        <button class="knowledge-button">Explorar</button>
+                    </div>
+                    <div class="knowledge-card">
+                        <div class="knowledge-header">
+                            <span class="knowledge-icon">🔒</span>
+                            <span class="knowledge-category">Segurança</span>
+                        </div>
+                        <div class="knowledge-stats">
+                            <span class="knowledge-stat">Vulnerabilidades: <strong>1,234</strong></span>
+                            <span class="knowledge-stat">Regras: <strong>300+</strong></span>
+                        </div>
+                        <button class="knowledge-button">Explorar</button>
+                    </div>
+                    <div class="knowledge-card">
+                        <div class="knowledge-header">
+                            <span class="knowledge-icon">💻</span>
+                            <span class="knowledge-category">Programação</span>
+                        </div>
+                        <div class="knowledge-stats">
+                            <span class="knowledge-stat">Padrões: <strong>456</strong></span>
+                            <span class="knowledge-stat">Soluções: <strong>789</strong></span>
+                        </div>
+                        <button class="knowledge-button">Explorar</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Memory Search -->
+            <section class="search-section">
+                <div class="section-header">
+                    <h3>Busca Semântica</h3>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="memorySearch" class="search-input" placeholder="Buscar na memória do Córtex...">
+                    <button class="search-button" id="searchButton">🔍</button>
+                </div>
+                <div class="search-results" id="searchResults">
+                    <div class="search-result">
+                        <div class="result-header">
+                            <span class="result-score">0.95</span>
+                            <span class="result-type">Solução</span>
+                        </div>
+                        <div class="result-content">
+                            <span class="result-title">Correção de deadlock em async tasks</span>
+                            <span class="result-description">Problema resolvido usando asyncio.gather() com timeout...</span>
+                        </div>
+                    </div>
+                    <div class="search-result">
+                        <div class="result-header">
+                            <span class="result-score">0.87</span>
+                            <span class="result-type">Padrão</span>
+                        </div>
+                        <div class="result-content">
+                            <span class="result-title">Padrão de erro: Connection timeout</span>
+                            <span class="result-description">Ocorre frequentemente em chamadas de API externas...</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Evolution Metrics -->
+            <aside class="metrics-section">
+                <div class="section-header">
+                    <h3>Métricas de Evolução</h3>
+                </div>
+                <div class="metrics-list">
+                    <div class="metric-item">
+                        <span class="metric-label">Ciclos Completados</span>
+                        <span class="metric-value" id="cyclesCompleted">0</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Melhorias Aplicadas</span>
+                        <span class="metric-value" id="improvementsApplied">0</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Padrões Descobertos</span>
+                        <span class="metric-value" id="patternsDiscovered">0</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Bugs Corrigidos</span>
+                        <span class="metric-value" id="bugsFixed">0</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Ganho de Performance</span>
+                        <span class="metric-value" id="performanceGain">0%</span>
+                    </div>
+                </div>
+                <div class="memory-stats">
+                    <h4>Memória</h4>
+                    <div class="memory-usage">
+                        <div class="memory-bar">
+                            <div class="memory-fill" id="memoryFill" style="width: 45%"></div>
+                        </div>
+                        <span class="memory-text" id="memoryText">45% usado</span>
+                    </div>
+                    <div class="memory-details">
+                        <span class="memory-detail">Embeddings: <strong id="embeddingCount">0</strong></span>
+                        <span class="memory-detail">Soluções: <strong id="solutionCount">0</strong></span>
+                        <span class="memory-detail">Erros: <strong id="errorCount">0</strong></span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Recent Insights -->
+            <section class="insights-section">
+                <div class="section-header">
+                    <h3>Insights Recentes</h3>
+                </div>
+                <div class="insights-list" id="insightsList">
+                    <div class="insight-item">
+                        <div class="insight-icon">💡</div>
+                        <div class="insight-content">
+                            <span class="insight-title">Otimização de performance</span>
+                            <span class="insight-description">Identificou que o uso de cache em chamadas de LLM reduz tempo de resposta em 40%</span>
+                            <span class="insight-time">2 horas atrás</span>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-icon">🔍</div>
+                        <div class="insight-content">
+                            <span class="insight-title">Padrão de segurança</span>
+                            <span class="insight-description">Detectou tentativas recorrentes de SQL injection em logs de aplicação</span>
+                            <span class="insight-time">5 horas atrás</span>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-icon">📈</div>
+                        <div class="insight-content">
+                            <span class="insight-title">Tendência de uso</span>
+                            <span class="insight-description">Uso do agente de programação aumentou 200% na última semana</span>
+                            <span class="insight-time">1 dia atrás</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/memory.js"></script>
+</body>
+</html>

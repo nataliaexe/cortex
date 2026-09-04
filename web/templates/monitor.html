@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Córtex - System Monitor</title>
+    <meta name="theme-color" content="#0a0a1a">
+    <link rel="stylesheet" href="/static/themes.css">
+    <link rel="stylesheet" href="/static/monitor.css">
+</head>
+<body class="theme-neural-synapse">
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="brand-icon">📊</div>
+                <div class="brand-text">
+                    <h1>System Monitor</h1>
+                    <span class="uptime-counter" id="uptimeCounter">Uptime: 14d 6h 23m</span>
+                </div>
+            </div>
+            <div class="header-controls">
+                <button class="header-button" id="refreshButton">🔄 Atualizar</button>
+                <button class="header-button" id="backButton">← Voltar</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="monitor-container">
+            <!-- Agents Status -->
+            <section class="agents-section">
+                <div class="section-header">
+                    <h3>Status dos Agentes</h3>
+                    <span class="section-badge" id="agentsOnline">3/4 Online</span>
+                </div>
+                <div class="agents-grid">
+                    <div class="agent-card online">
+                        <div class="agent-header">
+                            <span class="agent-icon">💬</span>
+                            <span class="agent-name">Assistente</span>
+                            <span class="agent-status online">🟢 Online</span>
+                        </div>
+                        <div class="agent-details">
+                            <span class="agent-detail">Tarefas: <strong>12</strong></span>
+                            <span class="agent-detail">Uptime: <strong>99.9%</strong></span>
+                        </div>
+                    </div>
+                    <div class="agent-card busy">
+                        <div class="agent-header">
+                            <span class="agent-icon">💻</span>
+                            <span class="agent-name">Programming</span>
+                            <span class="agent-status busy">🟡 Busy</span>
+                        </div>
+                        <div class="agent-details">
+                            <span class="agent-detail">Tarefa: <strong>Implement Security Agent</strong></span>
+                            <span class="agent-detail">Progresso: <strong>75%</strong></span>
+                        </div>
+                    </div>
+                    <div class="agent-card online">
+                        <div class="agent-header">
+                            <span class="agent-icon">🔒</span>
+                            <span class="agent-name">Security</span>
+                            <span class="agent-status online">🟢 Online</span>
+                        </div>
+                        <div class="agent-details">
+                            <span class="agent-detail">Mode: <strong>Monitor</strong></span>
+                            <span class="agent-detail">Threats: <strong>0</strong></span>
+                        </div>
+                    </div>
+                    <div class="agent-card idle">
+                        <div class="agent-header">
+                            <span class="agent-icon">🧠</span>
+                            <span class="agent-name">Evolution</span>
+                            <span class="agent-status idle">⚪ Idle</span>
+                        </div>
+                        <div class="agent-details">
+                            <span class="agent-detail">Learning: <strong>Disabled</strong></span>
+                            <span class="agent-detail">Cycles: <strong>0</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Resources -->
+            <section class="resources-section">
+                <div class="section-header">
+                    <h3>Recursos do Sistema</h3>
+                    <span class="section-badge" id="systemHealth">Saudável</span>
+                </div>
+                <div class="resources-grid">
+                    <div class="resource-card">
+                        <div class="resource-header">
+                            <span class="resource-icon">🖥️</span>
+                            <span class="resource-name">CPU</span>
+                        </div>
+                        <div class="resource-value">
+                            <span class="value-number" id="cpuValue">62</span>
+                            <span class="value-unit">%</span>
+                        </div>
+                        <div class="resource-bar">
+                            <div class="bar-fill" id="cpuBar" style="width: 62%"></div>
+                        </div>
+                    </div>
+                    <div class="resource-card">
+                        <div class="resource-header">
+                            <span class="resource-icon">💾</span>
+                            <span class="resource-name">RAM</span>
+                        </div>
+                        <div class="resource-value">
+                            <span class="value-number" id="ramValue">38</span>
+                            <span class="value-unit">%</span>
+                        </div>
+                        <div class="resource-bar">
+                            <div class="bar-fill" id="ramBar" style="width: 38%"></div>
+                        </div>
+                    </div>
+                    <div class="resource-card">
+                        <div class="resource-header">
+                            <span class="resource-icon">🎮</span>
+                            <span class="resource-name">GPU</span>
+                        </div>
+                        <div class="resource-value">
+                            <span class="value-number" id="gpuValue">45</span>
+                            <span class="value-unit">%</span>
+                        </div>
+                        <div class="resource-bar">
+                            <div class="bar-fill" id="gpuBar" style="width: 45%"></div>
+                        </div>
+                    </div>
+                    <div class="resource-card">
+                        <div class="resource-header">
+                            <span class="resource-icon">💿</span>
+                            <span class="resource-name">Disco</span>
+                        </div>
+                        <div class="resource-value">
+                            <span class="value-number" id="diskValue">67</span>
+                            <span class="value-unit">%</span>
+                        </div>
+                        <div class="resource-bar">
+                            <div class="bar-fill" id="diskBar" style="width: 67%"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Task Queue -->
+            <section class="queue-section">
+                <div class="section-header">
+                    <h3>Fila de Tarefas</h3>
+                    <span class="section-badge" id="queueCount">5 Pendentes</span>
+                </div>
+                <div class="queue-list" id="queueList">
+                    <div class="queue-item high">
+                        <div class="queue-header">
+                            <span class="queue-priority">ALTA</span>
+                            <span class="queue-id">#1234</span>
+                        </div>
+                        <div class="queue-content">
+                            <span class="queue-task">Implementar Security Agent</span>
+                            <span class="queue-agent">💻 Programming</span>
+                        </div>
+                        <div class="queue-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%"></div>
+                            </div>
+                            <span class="progress-text">75%</span>
+                        </div>
+                    </div>
+                    <div class="queue-item medium">
+                        <div class="queue-header">
+                            <span class="queue-priority">MÉDIA</span>
+                            <span class="queue-id">#1235</span>
+                        </div>
+                        <div class="queue-content">
+                            <span class="queue-task">Scan de segurança agendado</span>
+                            <span class="queue-agent">🔒 Security</span>
+                        </div>
+                        <div class="queue-status">
+                            <span class="status-badge pending">Pendente</span>
+                        </div>
+                    </div>
+                    <div class="queue-item low">
+                        <div class="queue-header">
+                            <span class="queue-priority">BAIXA</span>
+                            <span class="queue-id">#1236</span>
+                        </div>
+                        <div class="queue-content">
+                            <span class="queue-task">Backup diário</span>
+                            <span class="queue-agent">🔄 System</span>
+                        </div>
+                        <div class="queue-status">
+                            <span class="status-badge pending">Pendente</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Live Logs -->
+            <section class="logs-section">
+                <div class="section-header">
+                    <h3>Logs ao Vivo</h3>
+                    <div class="logs-controls">
+                        <button class="logs-button clear">Limpar</button>
+                        <button class="logs-button pause">Pausar</button>
+                    </div>
+                </div>
+                <div class="logs-container" id="logsContainer">
+                    <div class="log-entry info">
+                        <span class="log-time">12:03:45</span>
+                        <span class="log-level">INFO</span>
+                        <span class="log-message">Scan completado com sucesso</span>
+                    </div>
+                    <div class="log-entry success">
+                        <span class="log-time">12:03:42</span>
+                        <span class="log-level">SUCCESS</span>
+                        <span class="log-message">Tarefa #1233 concluída</span>
+                    </div>
+                    <div class="log-entry warning">
+                        <span class="log-time">12:03:30</span>
+                        <span class="log-level">WARNING</span>
+                        <span class="log-message">Uso de CPU acima de 80%</span>
+                    </div>
+                    <div class="log-entry info">
+                        <span class="log-time">12:03:15</span>
+                        <span class="log-level">INFO</span>
+                        <span class="log-message">Agente Programming iniciado</span>
+                    </div>
+                    <div class="log-entry error">
+                        <span class="log-time">12:02:58</span>
+                        <span class="log-level">ERROR</span>
+                        <span class="log-message">Falha na conexão com Ollama</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Metrics -->
+            <aside class="metrics-section">
+                <div class="section-header">
+                    <h3>Métricas</h3>
+                </div>
+                <div class="metrics-list">
+                    <div class="metric-item">
+                        <span class="metric-label">Tarefas Completadas</span>
+                        <span class="metric-value" id="completedTasks">1,234</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Taxa de Sucesso</span>
+                        <span class="metric-value" id="successRate">94.5%</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Tempo Médio</span>
+                        <span class="metric-value" id="avgTime">2.3s</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Tokens Usados</span>
+                        <span class="metric-value" id="tokensUsed">45.6K</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Ações por Hora</span>
+                        <span class="metric-value" id="actionsPerHour">127</span>
+                    </div>
+                </div>
+                <div class="charts-section">
+                    <h4>Performance</h4>
+                    <div class="chart-container">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/monitor.js"></script>
+</body>
+</html>

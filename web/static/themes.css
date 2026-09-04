@@ -1,0 +1,171 @@
+/* Themes CSS - Theme definitions for Cortex interface */
+
+:root {
+    /* Neural Synapse Theme (Default) */
+    --neural-synapse-bg-primary: #0a0a1a;
+    --neural-synapse-bg-secondary: #12121e;
+    --neural-synapse-bg-tertiary: #1a1a2e;
+    --neural-synapse-accent: #00ff88;
+    --neural-synapse-accent-secondary: #00d4ff;
+    --neural-synapse-text-primary: #ffffff;
+    --neural-synapse-text-secondary: #a0a0b0;
+    --neural-synapse-border: #2a2a3e;
+    
+    /* Matrix Theme */
+    --matrix-bg-primary: #000000;
+    --matrix-bg-secondary: #001100;
+    --matrix-bg-tertiary: #002200;
+    --matrix-accent: #00ff00;
+    --matrix-accent-secondary: #00cc00;
+    --matrix-text-primary: #00ff00;
+    --matrix-text-secondary: #00aa00;
+    --matrix-border: #003300;
+    
+    /* Cyberpunk Theme */
+    --cyberpunk-bg-primary: #1a001a;
+    --cyberpunk-bg-secondary: #220022;
+    --cyberpunk-bg-tertiary: #2a002a;
+    --cyberpunk-accent: #ff00ff;
+    --cyberpunk-accent-secondary: #00ffff;
+    --cyberpunk-text-primary: #ffffff;
+    --cyberpunk-text-secondary: #ff88ff;
+    --cyberpunk-border: #330033;
+    
+    /* Minimal Theme */
+    --minimal-bg-primary: #ffffff;
+    --minimal-bg-secondary: #f5f5f5;
+    --minimal-bg-tertiary: #e8e8e8;
+    --minimal-accent: #333333;
+    --minimal-accent-secondary: #666666;
+    --minimal-text-primary: #000000;
+    --minimal-text-secondary: #555555;
+    --minimal-border: #cccccc;
+}
+
+/* Base Theme Variables */
+body.theme-neural-synapse {
+    --bg-primary: var(--neural-synapse-bg-primary);
+    --bg-secondary: var(--neural-synapse-bg-secondary);
+    --bg-tertiary: var(--neural-synapse-bg-tertiary);
+    --accent: var(--neural-synapse-accent);
+    --accent-secondary: var(--neural-synapse-accent-secondary);
+    --text-primary: var(--neural-synapse-text-primary);
+    --text-secondary: var(--neural-synapse-text-secondary);
+    --border: var(--neural-synapse-border);
+}
+
+body.theme-matrix {
+    --bg-primary: var(--matrix-bg-primary);
+    --bg-secondary: var(--matrix-bg-secondary);
+    --bg-tertiary: var(--matrix-bg-tertiary);
+    --accent: var(--matrix-accent);
+    --accent-secondary: var(--matrix-accent-secondary);
+    --text-primary: var(--matrix-text-primary);
+    --text-secondary: var(--matrix-text-secondary);
+    --border: var(--matrix-border);
+}
+
+body.theme-cyberpunk {
+    --bg-primary: var(--cyberpunk-bg-primary);
+    --bg-secondary: var(--cyberpunk-bg-secondary);
+    --bg-tertiary: var(--cyberpunk-bg-tertiary);
+    --accent: var(--cyberpunk-accent);
+    --accent-secondary: var(--cyberpunk-accent-secondary);
+    --text-primary: var(--cyberpunk-text-primary);
+    --text-secondary: var(--cyberpunk-text-secondary);
+    --border: var(--cyberpunk-border);
+}
+
+body.theme-minimal {
+    --bg-primary: var(--minimal-bg-primary);
+    --bg-secondary: var(--minimal-bg-secondary);
+    --bg-tertiary: var(--minimal-bg-tertiary);
+    --accent: var(--minimal-accent);
+    --accent-secondary: var(--minimal-accent-secondary);
+    --text-primary: var(--minimal-text-primary);
+    --text-secondary: var(--minimal-text-secondary);
+    --border: var(--minimal-border);
+}
+
+/* Theme-specific overrides */
+body.theme-matrix .status-indicator,
+body.theme-matrix .agent-status.online {
+    background: var(--matrix-accent);
+    color: var(--matrix-bg-primary);
+}
+
+body.theme-cyberpunk .status-indicator,
+body.theme-cyberpunk .agent-status.online {
+    background: var(--cyberpunk-accent);
+    color: var(--cyberpunk-bg-primary);
+}
+
+body.theme-minimal .status-indicator,
+body.theme-minimal .agent-status.online {
+    background: var(--minimal-accent);
+    color: var(--minimal-bg-primary);
+}
+
+/* Matrix rain effect (optional) */
+body.theme-matrix::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 255, 0, 0.03) 50%,
+        transparent 100%
+    );
+    z-index: 0;
+}
+
+/* Cyberpunk glow effect */
+body.theme-cyberpunk .header-button:hover,
+body.theme-cyberpunk .action-button:hover {
+    box-shadow: 0 0 10px var(--cyberpunk-accent);
+}
+
+/* Minimal clean look */
+body.theme-minimal .header-button,
+body.theme-minimal .action-button {
+    background: var(--minimal-bg-tertiary);
+    border: 1px solid var(--minimal-border);
+    color: var(--minimal-text-primary);
+}
+
+body.theme-minimal .header-button:hover,
+body.theme-minimal .action-button:hover {
+    background: var(--minimal-border);
+}
+
+/* Font size variations */
+body.font-small {
+    font-size: 14px;
+}
+
+body.font-medium {
+    font-size: 16px;
+}
+
+body.font-large {
+    font-size: 18px;
+}
+
+/* Animation controls */
+body.no-animations * {
+    animation: none !important;
+    transition: none !important;
+}
+
+/* High contrast for accessibility */
+@media (prefers-contrast: high) {
+    :root {
+        --border: #ffffff;
+        --text-secondary: #ffffff;
+    }
+}

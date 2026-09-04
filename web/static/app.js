@@ -1,291 +1,274 @@
-// Gênesis Córtex - Dashboard JavaScript
-// Neural Synapse Theme
+class IntroSequence {
+    constructor() {
+        this.canvas = document.getElementById('introCanvas');
+        this.init();
+    }
+
+    init() {
+        if (!this.canvas) return;
+        this.prism = new Prism(this.canvas, {
+            height: 3.5,
+            baseWidth: 5.5,
+            animationType: 'rotate',
+            timeScale: 0.7,
+            scale: 3.5,
+            glow: 1.25,
+            noise: 0.35,
+            hueShift: 0,
+            colorFrequency: 1.2,
+            bloom: 1.1,
+            transparent: true,
+            suspendWhenOffscreen: false,
+            lightMode: false,
+        });
+
+        // Automatically transition after intro, but allow user to click Enter.
+        const enter = document.getElementById('enterButton');
+        const finishIntro = () => {
+            document.body.classList.add('ready');
+            const overlay = document.getElementById('introOverlay');
+            if (overlay) overlay.style.pointerEvents = 'none';
+        };
+
+        if (enter) {
+            enter.addEventListener('click', finishIntro);
+            enter.addEventListener('keydown', (e) => { if (e.key === 'Enter') finishIntro(); });
+        }
+
+        window.setTimeout(() => {
+            finishIntro();
+        }, 4200);
+    }
+}
 
 class CortexDashboard {
     constructor() {
-        this.ws = null;
-        this.messageCount = 0;
-        this.startTime = Date.now();
-        this.isConnected = false;
-        
+        this.stateIndex = 0;
+        this.states = ['idle', 'thinking', 'analyzing', 'executing', 'waiting', 'blocked', 'complete'];
+        this.canvas = null;
+        this.ctx = null;
+        this.particles = [];
+        this.animationId = null;
         this.init();
     }
-    
+
     init() {
-        this.setupEventListeners();
-        this.connectWebSocket();
-        this.updateStatus();
-        this.startUptimeCounter();
+        this.canvas = document.getElementById('prismCanvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.bindEvents();
+        this.setState('thinking');
+        this.buildParticles();
+        this.resizeCanvas();
+        this.animate();
+        this.cycleStates();
     }
-    
-    setupEventListeners() {
-        // Input field
-        const userInput = document.getElementById('userInput');
-        const sendButton = document.getElementById('sendButton');
-        
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                this.sendMessage();
+
+    bindEvents() {
+        const input = document.getElementById('userInput');
+        const button = document.getElementById('sendButton');
+
+        button.addEventListener('click', () => {
+            const value = input.value.trim();
+            if (!value) return;
+            this.executeCommand(value);
+            input.value = '';
+        });
+
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                const value = input.value.trim();
+                if (!value) return;
+                this.executeCommand(value);
+                input.value = '';
             }
         });
-        
-        sendButton.addEventListener('click', () => {
-            this.sendMessage();
-        });
-        
-        // Voice button
-        const voiceButton = document.getElementById('voiceButton');
-        voiceButton.addEventListener('click', () => {
-            this.toggleVoice();
-        });
-        
-        // Quick actions
-        document.querySelectorAll('.action-button').forEach(button => {
-            button.addEventListener('click', () => {
-                const action = button.dataset.action;
-                this.executeQuickAction(action);
+
+        document.querySelectorAll('.command-chip').forEach((chip) => {
+            chip.addEventListener('click', () => {
+                const value = chip.textContent.toLowerCase();
+                this.executeCommand(value);
             });
         });
+
+        window.addEventListener('resize', () => this.resizeCanvas());
     }
-    
-    connectWebSocket() {
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${protocol}//${window.location.host}/ws`;
-        
-        this.ws = new WebSocket(wsUrl);
-        
-        this.ws.onopen = () => {
-            this.isConnected = true;
-            this.updateConnectionStatus(true);
-            console.log('WebSocket conectado');
-        };
-        
-        this.ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            this.handleWebSocketMessage(data);
-        };
-        
-        this.ws.onerror = (error) => {
-            console.error('WebSocket error:', error);
-            this.updateConnectionStatus(false);
-        };
-        
-        this.ws.onclose = () => {
-            this.isConnected = false;
-            this.updateConnectionStatus(false);
-            console.log('WebSocket desconectado');
-            
-            // Tentar reconectar após 5 segundos
-            setTimeout(() => {
-                this.connectWebSocket();
-            }, 5000);
-        };
-    }
-    
-    handleWebSocketMessage(data) {
-        if (data.type === 'response') {
-            this.addMessage(data.content, 'system');
-        } else if (data.type === 'error') {
-            this.addMessage(`Erro: ${data.content}`, 'system');
-        }
-    }
-    
-    async sendMessage() {
-        const userInput = document.getElementById('userInput');
-        const message = userInput.value.trim();
-        
-        if (!message) return;
-        
-        // Adiciona mensagem do usuário
-        this.addMessage(message, 'user');
-        userInput.value = '';
-        
-        // Incrementa contador
-        this.messageCount++;
-        this.updateStats();
-        
-        // Envia via WebSocket se conectado
-        if (this.isConnected && this.ws) {
-            this.ws.send(message);
-        } else {
-            // Fallback para HTTP
-            try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ message })
-                });
-                
-                const data = await response.json();
-                this.addMessage(data.response, 'system');
-            } catch (error) {
-                this.addMessage('Erro ao enviar mensagem', 'system');
-            }
-        }
-    }
-    
-    addMessage(content, type) {
-        const chatContainer = document.getElementById('chatContainer');
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${type}`;
-        
-        const messageContent = document.createElement('div');
-        messageContent.className = 'message-content';
-        messageContent.innerHTML = `<p>${this.escapeHtml(content)}</p>`;
-        
-        messageDiv.appendChild(messageContent);
-        chatContainer.appendChild(messageDiv);
-        
-        // Scroll para baixo
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-    
-    escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-    
-    toggleVoice() {
-        const voiceButton = document.getElementById('voiceButton');
-        voiceButton.classList.toggle('active');
-        
-        if (voiceButton.classList.contains('active')) {
-            // Ativar reconhecimento de voz
-            this.startVoiceRecognition();
-        } else {
-            // Parar reconhecimento de voz
-            this.stopVoiceRecognition();
-        }
-    }
-    
-    startVoiceRecognition() {
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            this.recognition = new SpeechRecognition();
-            this.recognition.lang = 'pt-BR';
-            this.recognition.continuous = true;
-            this.recognition.interimResults = false;
-            
-            this.recognition.onresult = (event) => {
-                const transcript = event.results[event.results.length - 1][0].transcript;
-                document.getElementById('userInput').value = transcript;
-            };
-            
-            this.recognition.onerror = (event) => {
-                console.error('Erro no reconhecimento de voz:', event.error);
-                this.toggleVoice();
-            };
-            
-            this.recognition.start();
-        } else {
-            alert('Reconhecimento de voz não suportado neste navegador');
-            this.toggleVoice();
-        }
-    }
-    
-    stopVoiceRecognition() {
-        if (this.recognition) {
-            this.recognition.stop();
-            this.recognition = null;
-        }
-    }
-    
-    async executeQuickAction(action) {
-        const actions = {
-            'system_info': 'Informações do sistema',
-            'security_scan': 'Iniciando scan de segurança',
-            'dependency_check': 'Verificando dependências'
-        };
-        
-        const message = actions[action] || action;
-        this.addMessage(message, 'user');
-        
-        // Executa ação correspondente
-        try {
-            let endpoint;
-            if (action === 'system_info') {
-                endpoint = '/api/system/info';
-            } else if (action === 'security_scan') {
-                endpoint = '/api/security/scan';
-            } else if (action === 'dependency_check') {
-                endpoint = '/api/security/dependencies';
-            }
-            
-            if (endpoint) {
-                const response = await fetch(endpoint);
-                const data = await response.json();
-                this.addMessage(JSON.stringify(data, null, 2), 'system');
-            }
-        } catch (error) {
-            this.addMessage(`Erro ao executar ação: ${error.message}`, 'system');
-        }
-    }
-    
-    async updateStatus() {
-        try {
-            const response = await fetch('/api/status');
-            const data = await response.json();
-            
-            // Atualiza indicadores de status
-            document.getElementById('motorStatus').textContent = data.status === 'running' ? 'Online' : 'Offline';
-            document.getElementById('llmStatus').textContent = data.llm_enabled ? 'Ativo' : 'Inativo';
-            document.getElementById('voiceStatus').textContent = data.voice_enabled ? 'Ativo' : 'Inativo';
-            document.getElementById('securityStatus').textContent = data.security_enabled ? 'Ativo' : 'Inativo';
-            
-        } catch (error) {
-            console.error('Erro ao atualizar status:', error);
-        }
-    }
-    
-    updateConnectionStatus(connected) {
-        const statusDot = document.getElementById('statusDot');
-        const statusText = document.getElementById('statusText');
-        
-        if (connected) {
-            statusDot.classList.add('online');
-            statusDot.classList.remove('offline');
-            statusText.textContent = 'Conectado';
-        } else {
-            statusDot.classList.add('offline');
-            statusDot.classList.remove('online');
-            statusText.textContent = 'Desconectado';
-        }
-    }
-    
-    updateStats() {
-        document.getElementById('messageCount').textContent = this.messageCount;
-    }
-    
-    startUptimeCounter() {
+
+    cycleStates() {
         setInterval(() => {
-            const uptime = Math.floor((Date.now() - this.startTime) / 1000);
-            const hours = Math.floor(uptime / 3600);
-            const minutes = Math.floor((uptime % 3600) / 60);
-            const seconds = uptime % 60;
-            
-            document.getElementById('uptime').textContent = 
-                `${hours}h ${minutes}m ${seconds}s`;
-        }, 1000);
+            this.stateIndex = (this.stateIndex + 1) % this.states.length;
+            this.setState(this.states[this.stateIndex]);
+        }, 5200);
+    }
+
+    executeCommand(command) {
+        const lower = command.toLowerCase();
+        const stateMap = {
+            'security': 'analyzing',
+            'memory': 'thinking',
+            'tools': 'executing',
+            'governance': 'waiting',
+            'analyze': 'analyzing',
+            'scan': 'analyzing',
+            'evolve': 'executing',
+            'approve': 'waiting',
+            'blocked': 'blocked'
+        };
+
+        const selectedState = Object.entries(stateMap).find(([key]) => lower.includes(key));
+        this.setState(selectedState ? selectedState[1] : 'thinking');
+    }
+
+    setState(state) {
+        document.body.classList.remove('state-idle', 'state-thinking', 'state-analyzing', 'state-executing', 'state-waiting', 'state-blocked', 'state-complete');
+        document.body.classList.add(`state-${state}`);
+        const statePill = document.getElementById('statePill');
+        const labelMap = {
+            idle: 'IDLE',
+            thinking: 'THINKING',
+            analyzing: 'ANALYZING',
+            executing: 'EXECUTING',
+            waiting: 'WAITING',
+            blocked: 'BLOCKED',
+            complete: 'COMPLETE'
+        };
+        if (statePill) statePill.textContent = labelMap[state] || 'THINKING';
+    }
+
+    resizeCanvas() {
+        const rect = this.canvas.getBoundingClientRect();
+        const ratio = window.devicePixelRatio || 1;
+        this.canvas.width = rect.width * ratio;
+        this.canvas.height = rect.height * ratio;
+        this.ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        this.buildParticles();
+    }
+
+    buildParticles() {
+        const width = this.canvas.clientWidth || 600;
+        const height = this.canvas.clientHeight || 500;
+        const count = Math.min(140, Math.max(80, Math.floor(width / 9)));
+        this.particles = Array.from({ length: count }, () => ({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 0.9,
+            vy: (Math.random() - 0.5) * 0.9,
+            r: Math.random() * 2.3 + 1.4,
+            alpha: Math.random() * 0.8 + 0.2
+        }));
+    }
+
+    animate() {
+        const width = this.canvas.clientWidth;
+        const height = this.canvas.clientHeight;
+        const cx = width / 2;
+        const cy = height / 2;
+
+        const currentState = document.body.className.match(/state-(\w+)/)?.[1] || 'thinking';
+        const energy = currentState === 'thinking' ? 1.15 : currentState === 'analyzing' ? 1.6 : currentState === 'executing' ? 1.9 : currentState === 'waiting' ? 0.75 : currentState === 'blocked' ? 0.45 : 0.9;
+
+        this.ctx.clearRect(0, 0, width, height);
+
+        this.particles.forEach((particle, index) => {
+            const dx = cx - particle.x;
+            const dy = cy - particle.y;
+            const angle = Math.atan2(dy, dx);
+            const dist = Math.hypot(dx, dy) || 1;
+            const targetVx = (Math.cos(angle) * 0.9) / Math.max(1, dist / 90) + (Math.random() - 0.5) * 0.28;
+            const targetVy = (Math.sin(angle) * 0.9) / Math.max(1, dist / 90) + (Math.random() - 0.5) * 0.28;
+
+            particle.vx += (targetVx - particle.vx) * 0.03 * energy;
+            particle.vy += (targetVy - particle.vy) * 0.03 * energy;
+            particle.x += particle.vx * 1.8;
+            particle.y += particle.vy * 1.8;
+
+            if (particle.x < 0 || particle.x > width) particle.vx *= -1;
+            if (particle.y < 0 || particle.y > height) particle.vy *= -1;
+
+            this.ctx.beginPath();
+            this.ctx.fillStyle = `rgba(196, 208, 255, ${particle.alpha})`;
+            this.ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2);
+            this.ctx.fill();
+
+            for (let j = index + 1; j < this.particles.length; j++) {
+                const other = this.particles[j];
+                const dx2 = particle.x - other.x;
+                const dy2 = particle.y - other.y;
+                const d = Math.hypot(dx2, dy2);
+                if (d < 80) {
+                    this.ctx.beginPath();
+                    this.ctx.strokeStyle = `rgba(139, 92, 246, ${0.08 + (1 - d / 80) * 0.42})`;
+                    this.ctx.lineWidth = 1;
+                    this.ctx.moveTo(particle.x, particle.y);
+                    this.ctx.lineTo(other.x, other.y);
+                    this.ctx.stroke();
+                }
+            }
+        });
+
+        this.drawPrism(cx, cy, currentState);
+        this.animationId = requestAnimationFrame(() => this.animate());
+    }
+
+    drawPrism(cx, cy, state) {
+        const time = performance.now() * 0.001;
+        const hue = state === 'blocked' ? '#ff5d73' : state === 'waiting' ? '#f5b942' : '#8b5cf6';
+        const glow = state === 'blocked' ? 0.9 : state === 'waiting' ? 0.7 : 1.2;
+        const baseSize = Math.min(this.canvas.clientWidth, this.canvas.clientHeight) * 0.22;
+
+        this.ctx.save();
+        this.ctx.translate(cx, cy);
+        this.ctx.rotate(time * (state === 'executing' ? 0.9 : 0.45));
+
+        for (let i = 0; i < 3; i++) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, -baseSize * 0.92);
+            this.ctx.lineTo(baseSize * (0.72 - i * 0.12), baseSize * (0.42 + i * 0.18));
+            this.ctx.lineTo(-baseSize * (0.72 - i * 0.12), baseSize * (0.42 + i * 0.18));
+            this.ctx.closePath();
+            this.ctx.strokeStyle = `rgba(255,255,255,${0.15 + i * 0.1})`;
+            this.ctx.lineWidth = 1.2;
+            this.ctx.stroke();
+        }
+
+        const gradient = this.ctx.createLinearGradient(-baseSize, -baseSize, baseSize, baseSize);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+        gradient.addColorStop(0.25, hue);
+        gradient.addColorStop(0.6, '#ddd4ff');
+        gradient.addColorStop(1, 'rgba(139, 92, 246, 0.7)');
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(0, -baseSize * 0.96);
+        this.ctx.lineTo(baseSize * 0.85, baseSize * 0.5);
+        this.ctx.lineTo(0, baseSize * 1.08);
+        this.ctx.lineTo(-baseSize * 0.85, baseSize * 0.5);
+        this.ctx.closePath();
+        this.ctx.fillStyle = `rgba(139, 92, 246, ${0.1 + glow * 0.1})`;
+        this.ctx.fill();
+        this.ctx.strokeStyle = gradient;
+        this.ctx.lineWidth = 2.5;
+        this.ctx.shadowBlur = 24 * glow;
+        this.ctx.shadowColor = hue;
+        this.ctx.stroke();
+        this.ctx.shadowBlur = 0;
+
+        const rayCount = state === 'executing' ? 12 : state === 'thinking' ? 7 : 5;
+        for (let i = 0; i < rayCount; i++) {
+            const angle = (Math.PI * 2 * i) / rayCount + time * 0.5;
+            const startR = baseSize * 0.8;
+            const endR = baseSize * (1.38 + Math.sin(time * 2 + i) * 0.18);
+            this.ctx.beginPath();
+            this.ctx.moveTo(Math.cos(angle) * startR, Math.sin(angle) * startR);
+            this.ctx.lineTo(Math.cos(angle) * endR, Math.sin(angle) * endR);
+            this.ctx.strokeStyle = `rgba(255,255,255,${0.22 + i / rayCount * 0.4})`;
+            this.ctx.lineWidth = 1.2;
+            this.ctx.stroke();
+        }
+
+        this.ctx.restore();
     }
 }
 
-// Inicializa dashboard quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', () => {
-    window.dashboard = new CortexDashboard();
+    new IntroSequence();
+    new CortexDashboard();
 });
-
-// Service Worker para PWA
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/static/service-worker.js')
-            .then(registration => {
-                console.log('Service Worker registrado:', registration);
-            })
-            .catch(error => {
-                console.log('Erro ao registrar Service Worker:', error);
-            });
-    });
-}

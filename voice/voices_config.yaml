@@ -1,0 +1,80 @@
+# Perfis de Voz do Córtex
+# Configuração avançada do sistema de voz
+
+voice:
+  # Engine principal (piper ou coqui_xtts)
+  engine: "piper"
+  
+  # Voz Piper padrão
+  piper_voice: "luciana"
+  
+  # Voz clonada (Coqui XTTS)
+  cloned_voice: "rick_sanchez"
+  
+  # Configurações de áudio
+  speed: 1.0
+  pitch: 0
+  volume: 0.7
+  
+  # Perfil de contexto
+  profile: "casual"
+  
+  # Perfis pré-configurados
+  profiles:
+    casual:
+      engine: "piper"
+      voice: "luciana"
+      speed: 1.0
+      pitch: 0
+      volume: 0.7
+      
+    technical:
+      engine: "piper"
+      voice: "faber"
+      speed: 0.95
+      pitch: -0.1
+      volume: 0.8
+      
+    alert:
+      engine: "piper"
+      voice: "faber"
+      speed: 0.9
+      pitch: -0.2
+      volume: 1.0
+      
+    fun:
+      engine: "coqui_xtts"
+      voice: "rick_sanchez"
+      speed: 1.1
+      pitch: 0.2
+      volume: 0.8
+      trigger: "modo rick"
+  
+  # Ajustes anti-irritação
+  anti_irritation:
+    normalize_volume: true
+    noise_reduction: true
+    equalization:
+      bass_boost: 0.2
+      treble_reduction: 0.1
+    compression:
+      enabled: true
+      threshold: -20
+      ratio: 4
+    pauses:
+      between_sentences: 0.3
+      between_paragraphs: 0.6
+  
+  # Comandos de voz
+  commands:
+    wake_word: "ei córtex"
+    activation_phrases:
+      - "modo rick"
+      - "modo normal"
+      - "modo técnico"
+  
+  # Fallback
+  fallback:
+    on_cloning_failure: "luciana"
+    on_model_load_failure: "espeak"
+    max_retries: 3

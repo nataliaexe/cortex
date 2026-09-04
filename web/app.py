@@ -51,9 +51,35 @@ class CortexWebApp:
         self._setup_static_files()
 
     def _setup_web_routes(self) -> None:
+        templates = Jinja2Templates(directory=str(PROJECT_ROOT / "web" / "templates"))
+
         @self.app.get("/", response_class=HTMLResponse, include_in_schema=False)
         async def root(request: Request):
-            return Jinja2Templates(directory="web/templates").TemplateResponse("index.html", {"request": request})
+            return templates.TemplateResponse(request, "index.html", {"request": request})
+
+        @self.app.get("/chat", response_class=HTMLResponse, include_in_schema=False)
+        async def chat_page(request: Request):
+            return templates.TemplateResponse(request, "chat.html", {"request": request})
+
+        @self.app.get("/dev", response_class=HTMLResponse, include_in_schema=False)
+        async def dev_page(request: Request):
+            return templates.TemplateResponse(request, "dev.html", {"request": request})
+
+        @self.app.get("/security", response_class=HTMLResponse, include_in_schema=False)
+        async def security_page(request: Request):
+            return templates.TemplateResponse(request, "security.html", {"request": request})
+
+        @self.app.get("/monitor", response_class=HTMLResponse, include_in_schema=False)
+        async def monitor_page(request: Request):
+            return templates.TemplateResponse(request, "monitor.html", {"request": request})
+
+        @self.app.get("/memory", response_class=HTMLResponse, include_in_schema=False)
+        async def memory_page(request: Request):
+            return templates.TemplateResponse(request, "memory.html", {"request": request})
+
+        @self.app.get("/settings", response_class=HTMLResponse, include_in_schema=False)
+        async def settings_page(request: Request):
+            return templates.TemplateResponse(request, "settings.html", {"request": request})
 
         @self.app.get("/api/system/info", tags=["system"])
         async def system_info():

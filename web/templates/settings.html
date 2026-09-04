@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Córtex - Configurações</title>
+    <meta name="theme-color" content="#0a0a1a">
+    <link rel="stylesheet" href="/static/themes.css">
+    <link rel="stylesheet" href="/static/settings.css">
+</head>
+<body class="theme-neural-synapse">
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="brand-icon">⚙️</div>
+                <div class="brand-text">
+                    <h1>Configurações</h1>
+                    <span class="config-status">Configurações do Sistema</span>
+                </div>
+            </div>
+            <div class="header-controls">
+                <button class="header-button" id="saveButton">💾 Salvar</button>
+                <button class="header-button" id="resetButton">🔄 Reset</button>
+                <button class="header-button" id="backButton">← Voltar</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="settings-container">
+            <!-- Settings Navigation -->
+            <aside class="settings-nav">
+                <div class="nav-item active" data-section="models">
+                    <span class="nav-icon">🤖</span>
+                    <span class="nav-label">Modelos LLM</span>
+                </div>
+                <div class="nav-item" data-section="voice">
+                    <span class="nav-icon">🎙️</span>
+                    <span class="nav-label">Voz</span>
+                </div>
+                <div class="nav-item" data-section="memory">
+                    <span class="nav-icon">💾</span>
+                    <span class="nav-label">Memória</span>
+                </div>
+                <div class="nav-item" data-section="security">
+                    <span class="nav-icon">🔒</span>
+                    <span class="nav-label">Segurança</span>
+                </div>
+                <div class="nav-item" data-section="evolution">
+                    <span class="nav-icon">🧠</span>
+                    <span class="nav-label">Auto-Evolução</span>
+                </div>
+                <div class="nav-item" data-section="appearance">
+                    <span class="nav-icon">🎨</span>
+                    <span class="nav-label">Aparência</span>
+                </div>
+                <div class="nav-item" data-section="backup">
+                    <span class="nav-icon">💿</span>
+                    <span class="nav-label">Backup</span>
+                </div>
+                <div class="nav-item" data-section="personality">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">Personalidade</span>
+                </div>
+            </aside>
+
+            <!-- Settings Content -->
+            <section class="settings-content">
+                <!-- Models Section -->
+                <div class="settings-section active" id="models-section">
+                    <div class="section-header">
+                        <h2>Modelos LLM</h2>
+                        <p class="section-description">Configure os modelos de linguagem usados pelo Córtex</p>
+                    </div>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label>Modelo de Raciocínio</label>
+                            <select id="reasoningModel">
+                                <option value="deepseek-r1-7b">DeepSeek R1 7B</option>
+                                <option value="deepseek-r1-14b">DeepSeek R1 14B</option>
+                                <option value="llama-3-70b">Llama 3 70B</option>
+                            </select>
+                            <small class="form-help">Modelo usado para raciocínio complexo e planejamento</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Modelo de Código</label>
+                            <select id="codingModel">
+                                <option value="qwen-coder-7b">Qwen Coder 7B</option>
+                                <option value="qwen-coder-14b">Qwen Coder 14B</option>
+                                <option value="deepseek-coder">DeepSeek Coder</option>
+                            </select>
+                            <small class="form-help">Modelo usado para geração e análise de código</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Temperatura</label>
+                            <input type="range" id="temperature" min="0" max="100" value="70">
+                            <span class="range-value">0.7</span>
+                            <small class="form-help">Controla a criatividade das respostas (0-1)</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Max Tokens</label>
+                            <input type="number" id="maxTokens" value="4096" min="256" max="8192">
+                            <small class="form-help">Número máximo de tokens na resposta</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Timeout (segundos)</label>
+                            <input type="number" id="llmTimeout" value="30" min="5" max="120">
+                            <small class="form-help">Tempo máximo de espera por resposta</small>
+                        </div>
+                        <div class="form-actions">
+                            <button class="action-button test" id="testModelsButton">🧪 Testar Modelos</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voice Section -->
+                <div class="settings-section" id="voice-section">
+                    <div class="section-header">
+                        <h2>Voz</h2>
+                        <p class="section-description">Configure o sistema de voz do Córtex</p>
+                    </div>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label>Engine de Voz</label>
+                            <select id="voiceEngine">
+                                <option value="piper">Piper TTS</option>
+                                <option value="coqui">Coqui XTTS (Clonagem)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Voz (Piper)</label>
+                            <select id="piperVoice">
+                                <option value="luciana">Luciana (Feminino)</option>
+                                <option value="faber">Faber (Masculino)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Voz Personalizada (Clonagem)</label>
+                            <select id="clonedVoice">
+                                <option value="">Nenhuma</option>
+                                <option value="rick_sanchez">Rick Sanchez</option>
+                            </select>
+                            <small class="form-help">Selecione uma voz clonada personalizada</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Velocidade</label>
+                            <input type="range" id="voiceSpeed" min="50" max="150" value="100">
+                            <span class="range-value">1.0x</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Pitch</label>
+                            <input type="range" id="voicePitch" min="-20" max="20" value="0">
+                            <span class="range-value">0</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Volume</label>
+                            <input type="range" id="voiceVolume" min="0" max="100" value="70">
+                            <span class="range-value">70%</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Perfil de Contexto</label>
+                            <select id="voiceProfile">
+                                <option value="casual">Casual (Luciana)</option>
+                                <option value="technical">Técnico (Faber)</option>
+                                <option value="alert">Alertas (Faber)</option>
+                                <option value="fun">Diversão (Rick)</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button class="action-button test" id="testVoiceButton">🎙️ Testar Voz</button>
+                            <button class="action-button" id="downloadVoicesButton">⬇️ Baixar Vozes</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memory Section -->
+                <div class="settings-section" id="memory-section">
+                    <div class="section-header">
+                        <h2>Memória</h2>
+                        <p class="section-description">Configure os sistemas de memória do Córtex</p>
+                    </div>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label>Tipo de Memória Principal</label>
+                            <select id="memoryType">
+                                <option value="sqlite">SQLite (Relacional)</option>
+                                <option value="lancedb">LanceDB (Vetorial)</option>
+                                <option value="hybrid">Híbrido (SQLite + LanceDB)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tamanho Máximo da Memória (MB)</label>
+                            <input type="number" id="memorySize" value="1024" min="256" max="4096">
+                        </div>
+                        <div class="form-group">
+                            <label>Retenção de Memória (dias)</label>
+                            <input type="number" id="memoryRetention" value="30" min="7" max="365">
+                        </div>
+                        <div class="form-group">
+                            <label>Índice de Similaridade</label>
+                            <input type="range" id="similarityThreshold" min="50" max="95" value="70">
+                            <span class="range-value">0.7</span>
+                            <small class="form-help">Threshold para busca semântica</small>
+                        </div>
+                        <div class="form-actions">
+                            <button class="action-button" id="backupMemoryButton">💾 Backup Memória</button>
+                            <button class="action-button danger" id="clearMemoryButton">🗑️ Limpar Memória</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Section -->
+                <div class="settings-section" id="security-section">
+                    <div class="section-header">
+                        <h2>Segurança</h2>
+                        <p class="section-description">Configure as políticas de segurança e governança</p>
+                    </div>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label>Nível de Permissão</label>
+                            <select id="permissionLevel">
+                                <option value="strict">Restrito</option>
+                                <option value="moderate">Moderado</option>
+                                <option value="permissive">Permissivo</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirmar Ações Perigosas</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="confirmDangerous" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Audit Trail</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="auditTrail" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Paths Permitidos</label>
+                            <textarea id="allowedPaths" rows="3" placeholder="/home/nana/cortex&#10;/home/nana/projects">/home/nana/cortex
+/home/nana/projects</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Algoritmo de Criptografia</label>
+                            <select id="encryptionAlgorithm">
+                                <option value="aes-256-gcm">AES-256-GCM</option>
+                                <option value="aes-256-cbc">AES-256-CBC</option>
+                                <option value="chacha20-poly1305">ChaCha20-Poly1305</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button class="action-button" id="exportAuditButton">📄 Exportar Audit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Evolution Section -->
+                <div class="settings-section" id="evolution-section">
+                    <div class="section-header">
+                        <h2>Auto-Evolução</h2>
+                        <p class="section-description">Configure o sistema de auto-evolução do Córtex</p>
+                    </div>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label>Auto-Evolução</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="autoEvolution">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <small class="form-help">Permite que o Córtex modifique seu próprio código</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Intervalo de Ciclos (horas)</label>
+                            <input type="number" id="cycleInterval" value="24" min="1" max="168">
+                        </div>
+                        <div class="form-group">
+                            <label>Máximo de Iterações por Ciclo</label>
+                            <input type="number" id="maxIterations" value="5" min="1" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Sandbox Docker</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="dockerSandbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <small class="form-help">Testa mudanças em ambiente isolado</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Backup Automático</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="autoBackup" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="form-actions">
+                            <button class="action-button" id="runEvolutionButton">🔄 Executar Ciclo Manual</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appearance Section -->
+                <div class="settings-section" id="appearance-section">
+                    <div class="section-header">
+                        <h2>Aparência</h2>
+                        <p class="section-description">Personalize a aparência do interface</p>
+                    </div>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label>Tema</label>
+                            <div class="theme-grid">
+                                <div class="theme-card active" data-theme="neural-synapse">
+                                    <div class="theme-preview neural-synapse"></div>
+                                    <span class="theme-name">Neural Synapse</span>
+                                </div>
+                                <div class="theme-card" data-theme="matrix">
+                                    <div class="theme-preview matrix"></div>
+                                    <span class="theme-name">Matrix</span>
+                                </div>
+                                <div class="theme-card" data-theme="cyberpunk">
+                                    <div class="theme-preview cyberpunk"></div>
+                                    <span class="theme-name">Cyberpunk</span>
+                                </div>
+                                <div class="theme-card" data-theme="minimal">
+                                    <div class="theme-preview minimal"></div>
+                                    <span class="theme-name">Minimal</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Font Size</label>
+                            <select id="fontSize">
+                                <option value="small">Pequeno</option>
+                                <option value="medium" selected>Médio</option>
+                                <option value="large">Grande</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Animações</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="animations" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Notificações</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="notifications" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Backup Section -->
+                <div class="settings-section" id="backup-section">
+                    <div class="section-header">
+                        <h2>Backup</h2>
+                        <p class="section-description">Gerencie backups do sistema</p>
+                    </div>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label>Backup Automático</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="autoBackupEnabled" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Frequência de Backup</label>
+                            <select id="backupFrequency">
+                                <option value="daily">Diário</option>
+                                <option value="weekly">Semanal</option>
+                                <option value="monthly">Mensal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Local de Backup</label>
+                            <input type="text" id="backupLocation" value="/home/nana/cortex/backups">
+                        </div>
+                        <div class="form-group">
+                            <label>Retenção de Backups (dias)</label>
+                            <input type="number" id="backupRetention" value="7" min="1" max="30">
+                        </div>
+                        <div class="form-actions">
+                            <button class="action-button" id="createBackupButton">💾 Criar Backup Agora</button>
+                            <button class="action-button" id="restoreBackupButton">📂 Restaurar Backup</button>
+                        </div>
+                        <div class="backup-list">
+                            <h4>Backups Recentes</h4>
+                            <div class="backup-items" id="backupItems">
+                                <div class="backup-item">
+                                    <span class="backup-name">backup_20260904_143022.tar.gz</span>
+                                    <span class="backup-size">245 MB</span>
+                                    <span class="backup-date">Hoje, 14:30</span>
+                                    <button class="backup-action">Restaurar</button>
+                                </div>
+                                <div class="backup-item">
+                                    <span class="backup-name">backup_20260903_120000.tar.gz</span>
+                                    <span class="backup-size">238 MB</span>
+                                    <span class="backup-date">Ontem, 12:00</span>
+                                    <button class="backup-action">Restaurar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personality Section -->
+                <div class="settings-section" id="personality-section">
+                    <div class="section-header">
+                        <h2>Personalidade</h2>
+                        <p class="section-description">Configure a personalidade do Córtex</p>
+                    </div>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label>Perfil de Personalidade</label>
+                            <select id="personalityProfile">
+                                <option value="casual">Casual</option>
+                                <option value="professional">Profissional</option>
+                                <option value="security_expert">Especialista em Segurança</option>
+                                <option value="friendly">Amigável</option>
+                                <option value="technical">Técnico</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tom de Resposta</label>
+                            <select id="responseTone">
+                                <option value="neutral">Neutro</option>
+                                <option value="formal">Formal</option>
+                                <option value="casual">Casual</option>
+                                <option value="friendly">Amigável</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Uso de Emojis</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="useEmojis" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Nível de Detalhe</label>
+                            <select id="detailLevel">
+                                <option value="concise">Conciso</option>
+                                <option value="balanced" selected>Equilibrado</option>
+                                <option value="detailed">Detalhado</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Nome do Assistente</label>
+                            <input type="text" id="assistantName" value="Córtex">
+                        </div>
+                        <div class="form-actions">
+                            <button class="action-button" id="testPersonalityButton">🧪 Testar Personalidade</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/settings.js"></script>
+</body>
+</html>

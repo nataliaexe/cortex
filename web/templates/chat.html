@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Córtex - Assistente Pessoal</title>
+    <meta name="theme-color" content="#0a0a1a">
+    <link rel="stylesheet" href="/static/themes.css">
+    <link rel="stylesheet" href="/static/chat.css">
+</head>
+<body class="theme-neural-synapse">
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="brand-icon">🧠</div>
+                <div class="brand-text">
+                    <h1>Córtex</h1>
+                    <span class="status-indicator online">Online</span>
+                </div>
+            </div>
+            <div class="header-controls">
+                <button class="voice-button" id="voiceButton" title="Ativar voz">
+                    <span class="voice-icon">🎙️</span>
+                </button>
+                <button class="theme-button" id="themeButton" title="Mudar tema">
+                    <span class="theme-icon">🎨</span>
+                </button>
+                <button class="settings-button" id="settingsButton" title="Configurações">
+                    <span class="settings-icon">⚙️</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="chat-container">
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chatMessages">
+                <div class="message system">
+                    <div class="message-content">
+                        <p>Olá! Sou o Córtex, seu assistente pessoal IA. Como posso ajudar você hoje?</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agent Suggestion -->
+            <div class="agent-suggestion" id="agentSuggestion" style="display: none;">
+                <div class="suggestion-content">
+                    <span class="suggestion-icon">💡</span>
+                    <span class="suggestion-text">Esta tarefa pode ser melhor tratada pelo agente de programação.</span>
+                    <button class="suggestion-button" id="switchAgentButton">Trocar para Dev Agent</button>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="chat-input-area">
+                <div class="input-wrapper">
+                    <input 
+                        type="text" 
+                        id="messageInput" 
+                        class="message-input" 
+                        placeholder="Digite sua mensagem..."
+                        autocomplete="off"
+                    >
+                    <button class="send-button" id="sendButton">
+                        <span class="send-icon">➤</span>
+                    </button>
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-action" data-action="open_youtube">🎵 Abrir YouTube</button>
+                    <button class="quick-action" data-action="set_timer">⏱️ Timer</button>
+                    <button class="quick-action" data-action="create_note">📝 Nota</button>
+                    <button class="quick-action" data-action="system_info">💻 Sistema</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>Automação</h3>
+                <div class="automation-list">
+                    <button class="automation-item" data-action="open_app">
+                        <span class="automation-icon">📱</span>
+                        <span>Abrir App</span>
+                    </button>
+                    <button class="automation-item" data-action="play_music">
+                        <span class="automation-icon">🎵</span>
+                        <span>Tocar Música</span>
+                    </button>
+                    <button class="automation-item" data-action="search">
+                        <span class="automation-icon">🔍</span>
+                        <span>Pesquisar</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Lembretes</h3>
+                <div class="reminders-list" id="remindersList">
+                    <div class="reminder-item">
+                        <span class="reminder-time">14:00</span>
+                        <span class="reminder-text">Reunião de projeto</span>
+                    </div>
+                </div>
+                <button class="add-reminder-button" id="addReminderButton">+ Adicionar Lembrete</button>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Notas Rápidas</h3>
+                <div class="notes-list" id="notesList">
+                    <div class="note-item">
+                        <span class="note-text">Ideia para novo projeto...</span>
+                    </div>
+                </div>
+                <button class="add-note-button" id="addNoteButton">+ Adicionar Nota</button>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Controle do Sistema</h3>
+                <div class="system-controls">
+                    <div class="control-item">
+                        <label>Volume</label>
+                        <input type="range" id="volumeControl" min="0" max="100" value="70">
+                    </div>
+                    <div class="control-item">
+                        <label>Brilho</label>
+                        <input type="range" id="brightnessControl" min="0" max="100" value="80">
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Modal for Settings -->
+    <div class="modal" id="settingsModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Configurações</h2>
+                <button class="modal-close" id="closeSettingsModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>Modelos LLM</h3>
+                    <select id="modelSelect">
+                        <option value="deepseek">DeepSeek R1 7B</option>
+                        <option value="qwen">Qwen Coder 7B</option>
+                    </select>
+                </div>
+                <div class="settings-section">
+                    <h3>Voz</h3>
+                    <select id="voiceSelect">
+                        <option value="luciana">Luciana (Piper)</option>
+                        <option value="faber">Faber (Piper)</option>
+                        <option value="rick">Rick Sanchez (Clonagem)</option>
+                    </select>
+                </div>
+                <div class="settings-section">
+                    <h3>Tema</h3>
+                    <select id="themeSelect">
+                        <option value="neural-synapse">Neural Synapse</option>
+                        <option value="matrix">Matrix</option>
+                        <option value="cyberpunk">Cyberpunk</option>
+                        <option value="minimal">Minimal</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/chat.js"></script>
+</body>
+</html>

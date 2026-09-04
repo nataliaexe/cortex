@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Córtex - Dev Agent</title>
+    <meta name="theme-color" content="#0a0a1a">
+    <link rel="stylesheet" href="/static/themes.css">
+    <link rel="stylesheet" href="/static/dev.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/editor/editor.main.min.css">
+</head>
+<body class="theme-neural-synapse">
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="brand-icon">💻</div>
+                <div class="brand-text">
+                    <h1>Dev Agent</h1>
+                    <span class="status-indicator" id="agentStatus">Idle</span>
+                </div>
+            </div>
+            <div class="header-controls">
+                <div class="project-info">
+                    <span class="project-name">cortex</span>
+                    <span class="branch-name">main</span>
+                </div>
+                <button class="header-button" id="runTestsButton">▶️ Testar</button>
+                <button class="header-button" id="gitCommitButton">📝 Commit</button>
+                <button class="header-button" id="backButton">← Voltar</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dev-container">
+            <!-- File Explorer -->
+            <aside class="file-explorer">
+                <div class="explorer-header">
+                    <h3>Arquivos</h3>
+                    <button class="refresh-button" id="refreshFiles">🔄</button>
+                </div>
+                <div class="file-tree" id="fileTree">
+                    <div class="tree-item tree-item--folder expanded">
+                        <span class="tree-icon">📁</span>
+                        <span class="tree-name">core</span>
+                        <div class="tree-children">
+                            <div class="tree-item tree-item--folder">
+                                <span class="tree-icon">📁</span>
+                                <span class="tree-name">agents</span>
+                            </div>
+                            <div class="tree-item tree-item--folder">
+                                <span class="tree-icon">📁</span>
+                                <span class="tree-name">self_modification</span>
+                            </div>
+                            <div class="tree-item tree-item--file">
+                                <span class="tree-icon">📄</span>
+                                <span class="tree-name">engine.py</span>
+                            </div>
+                            <div class="tree-item tree-item--file">
+                                <span class="tree-icon">📄</span>
+                                <span class="tree-name">task_executor.py</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tree-item tree-item--folder">
+                        <span class="tree-icon">📁</span>
+                        <span class="tree-name">web</span>
+                    </div>
+                    <div class="tree-item tree-item--folder">
+                        <span class="tree-icon">📁</span>
+                        <span class="tree-name">tests</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Code Editor -->
+            <section class="editor-section">
+                <div class="editor-tabs" id="editorTabs">
+                    <div class="tab active" data-file="core/engine.py">
+                        <span class="tab-name">engine.py</span>
+                        <span class="tab-close">×</span>
+                    </div>
+                </div>
+                <div class="editor-container" id="editorContainer">
+                    <div id="monacoEditor"></div>
+                </div>
+                <div class="editor-footer">
+                    <div class="editor-stats">
+                        <span class="stat-item">Linhas: <strong id="lineCount">142</strong></span>
+                        <span class="stat-item">Caracteres: <strong id="charCount">4,521</strong></span>
+                        <span class="stat-item">Linguagem: <strong id="language">Python</strong></span>
+                    </div>
+                    <div class="editor-actions">
+                        <button class="action-button" id="saveButton">💾 Salvar</button>
+                        <button class="action-button" id="formatButton">📐 Format</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Terminal -->
+            <section class="terminal-section">
+                <div class="terminal-header">
+                    <h3>Terminal</h3>
+                    <div class="terminal-controls">
+                        <button class="terminal-button clear">Limpar</button>
+                        <button class="terminal-button minimize">_</button>
+                    </div>
+                </div>
+                <div class="terminal-output" id="terminalOutput">
+                    <div class="terminal-line">> pytest tests/ -v</div>
+                    <div class="terminal-line success">✅ 45/45 tests passed</div>
+                    <div class="terminal-line">> git status</div>
+                    <div class="terminal-line">On branch main</div>
+                    <div class="terminal-line">Your branch is up to date with 'origin/main'.</div>
+                </div>
+                <div class="terminal-input">
+                    <span class="terminal-prompt">></span>
+                    <input type="text" id="terminalInput" placeholder="Digite um comando..." autocomplete="off">
+                </div>
+            </section>
+        </main>
+
+        <!-- Task Panel -->
+        <aside class="task-panel">
+            <div class="panel-header">
+                <h3>Tarefas de Programação</h3>
+                <button class="new-task-button" id="newTaskButton">+ Nova Tarefa</button>
+            </div>
+            <div class="task-status" id="taskStatus">
+                <div class="status-item">
+                    <span class="status-label">Status</span>
+                    <span class="status-value" id="currentStatus">Idle</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Iteração</span>
+                    <span class="status-value" id="iterationCount">0/5</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Progresso</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="task-actions">
+                <button class="task-action-button" id="planButton">📋 Planejar</button>
+                <button class="task-action-button" id="codeButton">💻 Codar</button>
+                <button class="task-action-button" id="testButton">🧪 Testar</button>
+                <button class="task-action-button" id="fixButton">🔧 Corrigir</button>
+            </div>
+            <div class="task-history">
+                <h4>Histórico</h4>
+                <div class="history-list" id="historyList">
+                    <div class="history-item completed">
+                        <span class="history-icon">✅</span>
+                        <div class="history-content">
+                            <span class="history-title">Criar estrutura de agentes</span>
+                            <span class="history-time">14:30</span>
+                        </div>
+                    </div>
+                    <div class="history-item completed">
+                        <span class="history-icon">✅</span>
+                        <div class="history-content">
+                            <span class="history-title">Implementar Programming Agent</span>
+                            <span class="history-time">15:15</span>
+                        </div>
+                    </div>
+                    <div class="history-item in-progress">
+                        <span class="history-icon">🔄</span>
+                        <div class="history-content">
+                            <span class="history-title">Implementar Security Agent</span>
+                            <span class="history-time">15:45</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="git-panel">
+                <h4>Git Status</h4>
+                <div class="git-status" id="gitStatus">
+                    <div class="git-item modified">
+                        <span class="git-status-letter">M</span>
+                        <span class="git-file">core/agents/programming_agent.py</span>
+                    </div>
+                    <div class="git-item modified">
+                        <span class="git-status-letter">M</span>
+                        <span class="git-file">core/agents/security_agent.py</span>
+                    </div>
+                    <div class="git-item new">
+                        <span class="git-status-letter">A</span>
+                        <span class="git-file">core/agents/evolution_agent.py</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- New Task Modal -->
+    <div class="modal" id="newTaskModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nova Tarefa de Programação</h2>
+                <button class="modal-close" id="closeTaskModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Descrição da Tarefa</label>
+                    <textarea id="taskDescription" rows="4" placeholder="Descreva a tarefa de programação..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Prioridade</label>
+                    <select id="taskPriority">
+                        <option value="high">Alta</option>
+                        <option value="medium" selected>Média</option>
+                        <option value="low">Baixa</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Contexto Adicional</label>
+                    <textarea id="taskContext" rows="2" placeholder="Informações adicionais (opcional)..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button class="button button--secondary" id="cancelTaskButton">Cancelar</button>
+                    <button class="button button--primary" id="submitTaskButton">Enviar Tarefa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/loader.min.js"></script>
+    <script src="/static/dev.js"></script>
+</body>
+</html>

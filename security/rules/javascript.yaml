@@ -184,7 +184,7 @@ javascript_nodejs_eval:
   patterns:
     - "vm\\.eval"
     - "vm\\.runInNewContext"
-  - remediation: "Evite vm module ou sandbox adequadamente"
+  remediation: "Evite vm module ou sandbox adequadamente"
 
 javascript_weak_crypto:
   type: weak_cryptography

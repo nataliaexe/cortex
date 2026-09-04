@@ -3,127 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gênesis Córtex - Dashboard</title>
-    <meta name="description" content="Assistente Pessoal Offline">
-    <meta name="theme-color" content="#1a1a2e">
+    <title>Córtex | Cognitive Core</title>
+    <meta name="description" content="Central de operação do Córtex">
+    <meta name="theme-color" content="#08090D">
     <link rel="manifest" href="/static/manifest.json">
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
-    <div class="container">
-        <header class="header">
-            <h1>Gênesis Córtex</h1>
-            <div class="status-indicator">
-                <span class="status-dot" id="statusDot"></span>
-                <span id="statusText">Conectando...</span>
+<body class="cortex-shell state-thinking intro-mode">
+    <div id="introOverlay" class="intro-overlay" aria-hidden="true">
+        <canvas id="introCanvas"></canvas>
+        <div class="splash-center" role="dialog" aria-label="intro splash">
+            <div class="splash-prism">
+                <!-- Simple line-art brain SVG -->
+                <svg width="180" height="120" viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <g fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.95">
+                        <path d="M28 60c0-22 18-40 40-40s40 18 40 40-18 40-40 40S28 82 28 60z" stroke-opacity="0.9"/>
+                        <path d="M80 20c8 6 12 14 12 22" stroke-opacity="0.6"/>
+                        <path d="M36 48c8-6 18-10 28-10" stroke-opacity="0.6"/>
+                        <path d="M120 72c-8 6-18 10-28 10" stroke-opacity="0.6"/>
+                        <path d="M56 36c6 8 6 18 4 26" stroke-opacity="0.6"/>
+                        <path d="M104 44c-6 8-6 18-4 26" stroke-opacity="0.6"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="splash-copy">
+                <div class="splash-title">CÓRTEX</div>
+                <div class="splash-sub">COGNITIVE CORE</div>
+                <button id="enterButton" class="splash-enter" type="button">Entre</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="background-grid"></div>
+    <div class="ambient ambient-synaptic"></div>
+
+    <div class="app-shell">
+        <header class="topbar">
+            <div class="brand-block">
+                <div class="brand-mark" aria-hidden="true">
+                    <span class="brand-mark__core"></span>
+                </div>
+                <div class="brand-copy">
+                    <div class="brand-name">CÓRTEX</div>
+                    <div class="brand-subtitle">COGNITIVE CORE ONLINE</div>
+                </div>
+            </div>
+
+            <div class="topbar-meta">
+                <span class="meta-dot"></span>
+                <span class="meta-label">LOCAL</span>
+                <button class="ghost-button" type="button">Ctrl + K</button>
             </div>
         </header>
 
-        <main class="main-content">
-            <section class="chat-section">
-                <div class="chat-container" id="chatContainer">
-                    <div class="message system">
-                        <div class="message-content">
-                            <p>Olá! Sou o Córtex, seu assistente pessoal offline. Como posso ajudar hoje?</p>
-                        </div>
+        <main class="workspace-grid">
+            <aside class="panel modules-panel">
+                <div class="panel-heading">MODULES</div>
+                <nav class="module-list" aria-label="Módulos principais">
+                    <button class="module-item active" type="button">Memory</button>
+                    <button class="module-item" type="button">Security</button>
+                    <button class="module-item" type="button">Tools</button>
+                    <button class="module-item" type="button">Governance</button>
+                    <button class="module-item" type="button">Evolution</button>
+                </nav>
+
+                <div class="context-panel">
+                    <div class="panel-heading panel-heading--small">CONTEXT</div>
+                    <ul class="context-list">
+                        <li><span>Project</span><strong>Cortex</strong></li>
+                        <li><span>Files</span><strong>184</strong></li>
+                        <li><span>Memory</span><strong>4 relevant</strong></li>
+                        <li><span>Models</span><strong>Reasoning / Coding</strong></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <section class="panel core-panel">
+                <div class="core-header">
+                    <div class="state-pill" id="statePill">THINKING</div>
+                    <div class="signal-row">
+                        <span class="signal-dot signal-dot--live"></span>
+                        <span class="signal-label">SYSTEM ACTIVE</span>
                     </div>
                 </div>
 
-                <div class="input-section">
-                    <div class="input-container">
-                        <input 
-                            type="text" 
-                            id="userInput" 
-                            placeholder="Digite sua mensagem..." 
-                            autocomplete="off"
-                        >
-                        <button id="sendButton" class="send-button">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="22" y1="2" x2="11" y2="13"></line>
-                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                            </svg>
-                        </button>
+                <div class="core-stage" aria-label="Prisma do Córtex">
+                    <div class="core-noise"></div>
+                    <div class="core-glow"></div>
+                    <div class="core-halo"></div>
+                    <canvas id="prismCanvas"></canvas>
+                    <div class="core-rings ring-one"></div>
+                    <div class="core-rings ring-two"></div>
+                    <div class="core-rings ring-three"></div>
+                </div>
+
+                <div class="core-footer">
+                    <div class="core-stat">
+                        <span class="core-stat__label">INTENT</span>
+                        <strong>Security Analysis</strong>
                     </div>
-                    <div class="voice-controls">
-                        <button id="voiceButton" class="voice-button" title="Ativar voz">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                                <line x1="12" y1="19" x2="12" y2="23"></line>
-                                <line x1="8" y1="23" x2="16" y2="23"></line>
-                            </svg>
-                        </button>
+                    <div class="core-stat">
+                        <span class="core-stat__label">POLICY</span>
+                        <strong>Allowed</strong>
+                    </div>
+                    <div class="core-stat">
+                        <span class="core-stat__label">FILES</span>
+                        <strong>42 / 87</strong>
                     </div>
                 </div>
             </section>
 
-            <aside class="sidebar">
-                <div class="panel">
-                    <h3>Status do Sistema</h3>
-                    <div class="status-grid">
-                        <div class="status-item">
-                            <span class="status-label">Motor</span>
-                            <span class="status-value" id="motorStatus">-</span>
+            <aside class="panel activity-panel">
+                <div class="panel-heading">ACTIVITY</div>
+                <div class="activity-stack">
+                    <div class="activity-item">
+                        <span class="activity-bullet activity-bullet--green"></span>
+                        <div>
+                            <strong>Scanner</strong>
+                            <small>Running</small>
                         </div>
-                        <div class="status-item">
-                            <span class="status-label">LLM</span>
-                            <span class="status-value" id="llmStatus">-</span>
+                    </div>
+                    <div class="activity-item">
+                        <span class="activity-bullet activity-bullet--amber"></span>
+                        <div>
+                            <strong>Governance</strong>
+                            <small>Approval required</small>
                         </div>
-                        <div class="status-item">
-                            <span class="status-label">Voz</span>
-                            <span class="status-value" id="voiceStatus">-</span>
+                    </div>
+                    <div class="activity-item">
+                        <span class="activity-bullet activity-bullet--violet"></span>
+                        <div>
+                            <strong>Sandbox</strong>
+                            <small>Initialized</small>
                         </div>
-                        <div class="status-item">
-                            <span class="status-label">Segurança</span>
-                            <span class="status-value" id="securityStatus">-</span>
+                    </div>
+                    <div class="activity-item">
+                        <span class="activity-bullet activity-bullet--gray"></span>
+                        <div>
+                            <strong>Memory</strong>
+                            <small>Recovered context</small>
                         </div>
                     </div>
                 </div>
 
-                <div class="panel">
-                    <h3>Ações Rápidas</h3>
-                    <div class="quick-actions">
-                        <button class="action-button" data-action="system_info">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                            </svg>
-                            Info Sistema
-                        </button>
-                        <button class="action-button" data-action="security_scan">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            </svg>
-                            Scan Segurança
-                        </button>
-                        <button class="action-button" data-action="dependency_check">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="16 18 22 12 16 6"></polyline>
-                                <polyline points="8 6 2 12 8 18"></polyline>
-                            </svg>
-                            Check Deps
-                        </button>
-                    </div>
-                </div>
-
-                <div class="panel">
-                    <h3>Estatísticas</h3>
-                    <div class="stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Mensagens</span>
-                            <span class="stat-value" id="messageCount">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Uptime</span>
-                            <span class="stat-value" id="uptime">0s</span>
-                        </div>
-                    </div>
+                <div class="activity-timeline">
+                    <div class="panel-heading panel-heading--small">TIMELINE</div>
+                    <ul>
+                        <li><span>14:31</span><em>Repository analyzed</em></li>
+                        <li><span>14:32</span><em>3 security findings</em></li>
+                        <li><span>14:33</span><em>Policy check completed</em></li>
+                        <li><span>14:34</span><em>Human approval required</em></li>
+                    </ul>
                 </div>
             </aside>
         </main>
+
+        <section class="lower-grid">
+            <div class="panel governance-panel">
+                <div class="panel-heading">GOVERNANCE</div>
+                <div class="governance-flow">
+                    <span class="flow-node pending">REQUEST</span>
+                    <span class="flow-arrow">↓</span>
+                    <span class="flow-node active">INTENT DETECTED</span>
+                    <span class="flow-arrow">↓</span>
+                    <span class="flow-node approved">POLICY CHECK</span>
+                    <span class="flow-arrow">↓</span>
+                    <span class="flow-node warning">HUMAN APPROVAL</span>
+                    <span class="flow-arrow">↓</span>
+                    <span class="flow-node">SANDBOX</span>
+                    <span class="flow-arrow">↓</span>
+                    <span class="flow-node">AUDIT</span>
+                </div>
+            </div>
+
+            <div class="panel command-panel">
+                <div class="panel-heading">COMMAND</div>
+                <div class="command-input-wrap">
+                    <span class="command-prompt">&gt;</span>
+                    <input id="userInput" type="text" placeholder="analyze repository / inspect security / evolve policy" autocomplete="off" />
+                    <button id="sendButton" type="button">EXECUTE</button>
+                </div>
+                <div class="quick-commands">
+                    <button class="command-chip" type="button">SECURITY</button>
+                    <button class="command-chip" type="button">MEMORY</button>
+                    <button class="command-chip" type="button">TOOLS</button>
+                    <button class="command-chip" type="button">GOVERNANCE</button>
+                </div>
+            </div>
+        </section>
     </div>
 
+    <script src="/static/Prism.js"></script>
     <script src="/static/app.js"></script>
 </body>
 </html>

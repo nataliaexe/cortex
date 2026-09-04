@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Córtex - Security Agent</title>
+    <meta name="theme-color" content="#0a0a1a">
+    <link rel="stylesheet" href="/static/themes.css">
+    <link rel="stylesheet" href="/static/security.css">
+</head>
+<body class="theme-neural-synapse">
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="brand-icon">🔒</div>
+                <div class="brand-text">
+                    <h1>Security Agent</h1>
+                    <span class="status-indicator" id="agentStatus">Online</span>
+                </div>
+            </div>
+            <div class="header-controls">
+                <div class="mode-selector">
+                    <button class="mode-button active" data-mode="scan">Scan</button>
+                    <button class="mode-button" data-mode="monitor">Monitor</button>
+                    <button class="mode-button" data-mode="pentest">Pentest</button>
+                </div>
+                <button class="header-button" id="scanButton">🔍 Scan Completo</button>
+                <button class="header-button" id="backButton">← Voltar</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="security-container">
+            <!-- Threats Panel -->
+            <aside class="threats-panel">
+                <div class="panel-header">
+                    <h3>Ameaças Detectadas</h3>
+                    <div class="threat-count">
+                        <span class="count-critical" id="criticalCount">0</span>
+                        <span class="count-high" id="highCount">0</span>
+                        <span class="count-medium" id="mediumCount">0</span>
+                    </div>
+                </div>
+                <div class="threats-list" id="threatsList">
+                    <div class="threat-item critical">
+                        <div class="threat-header">
+                            <span class="threat-icon">🔴</span>
+                            <span class="threat-severity">CRÍTICA</span>
+                        </div>
+                        <div class="threat-content">
+                            <span class="threat-title">SQL Injection vulnerability</span>
+                            <span class="threat-location">api/routes/chat.py:45</span>
+                        </div>
+                    </div>
+                    <div class="threat-item high">
+                        <div class="threat-header">
+                            <span class="threat-icon">🟠</span>
+                            <span class="threat-severity">ALTA</span>
+                        </div>
+                        <div class="threat-content">
+                            <span class="threat-title">Hardcoded API key</span>
+                            <span class="threat-location">config.yaml:12</span>
+                        </div>
+                    </div>
+                    <div class="threat-item medium">
+                        <div class="threat-header">
+                            <span class="threat-icon">🟡</span>
+                            <span class="threat-severity">MÉDIA</span>
+                        </div>
+                        <div class="threat-content">
+                            <span class="threat-title">Outdated dependency</span>
+                            <span class="threat-location">requirements.txt:8</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="threat-actions">
+                    <button class="threat-action-button" id="exportReportButton">📄 Exportar Relatório</button>
+                    <button class="threat-action-button" id="clearThreatsButton">🗑️ Limpar</button>
+                </div>
+            </aside>
+
+            <!-- Network Monitor -->
+            <section class="network-section">
+                <div class="section-header">
+                    <h3>Monitor de Rede</h3>
+                    <div class="network-stats">
+                        <span class="stat-item">Portas: <strong id="openPorts">3</strong></span>
+                        <span class="stat-item">Conexões: <strong id="connections">12</strong></span>
+                    </div>
+                </div>
+                <div class="network-visualization">
+                    <canvas id="networkCanvas"></canvas>
+                </div>
+                <div class="network-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Tráfego</span>
+                        <div class="traffic-graph">
+                            <div class="traffic-bar" style="height: 60%"></div>
+                            <div class="traffic-bar" style="height: 80%"></div>
+                            <div class="traffic-bar" style="height: 40%"></div>
+                            <div class="traffic-bar" style="height: 90%"></div>
+                            <div class="traffic-bar" style="height: 50%"></div>
+                            <div class="traffic-bar" style="height: 70%"></div>
+                            <div class="traffic-bar" style="height: 65%"></div>
+                            <div class="traffic-bar" style="height: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Portas Abertas</span>
+                        <div class="ports-list">
+                            <span class="port-badge">22 SSH</span>
+                            <span class="port-badge">80 HTTP</span>
+                            <span class="port-badge">443 HTTPS</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Vulnerability Scanner -->
+            <section class="scanner-section">
+                <div class="section-header">
+                    <h3>Scanner de Vulnerabilidades</h3>
+                    <button class="scan-button" id="startScanButton">▶️ Iniciar Scan</button>
+                </div>
+                <div class="scan-progress" id="scanProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="scanProgressFill" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="scanProgressText">Escaneando...</span>
+                </div>
+                <div class="scan-results" id="scanResults">
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span class="result-icon">📄</span>
+                            <span class="result-title">Análise de Código</span>
+                        </div>
+                        <div class="result-stats">
+                            <span class="result-stat">Arquivos: <strong>45</strong></span>
+                            <span class="result-stat">Vulns: <strong>12</strong></span>
+                        </div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span class="result-icon">📦</span>
+                            <span class="result-title">Dependências</span>
+                        </div>
+                        <div class="result-stats">
+                            <span class="result-stat">Pacotes: <strong>23</strong></span>
+                            <span class="result-stat">CVEs: <strong>5</strong></span>
+                        </div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span class="result-icon">⚙️</span>
+                            <span class="result-title">Binários</span>
+                        </div>
+                        <div class="result-stats">
+                            <span class="result-stat">Arquivos: <strong>8</strong></span>
+                            <span class="result-stat">Suspeitos: <strong>1</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Process Monitor -->
+            <aside class="process-panel">
+                <div class="panel-header">
+                    <h3>Processos</h3>
+                    <button class="refresh-button" id="refreshProcesses">🔄</button>
+                </div>
+                <div class="process-list" id="processList">
+                    <div class="process-item normal">
+                        <span class="process-pid">1234</span>
+                        <span class="process-name">python3</span>
+                        <span class="process-cpu">2.3%</span>
+                        <span class="process-mem">1.2%</span>
+                    </div>
+                    <div class="process-item normal">
+                        <span class="process-pid">5678</span>
+                        <span class="process-name">ollama</span>
+                        <span class="process-cpu">45.6%</span>
+                        <span class="process-mem">12.4%</span>
+                    </div>
+                    <div class="process-item suspicious">
+                        <span class="process-pid">9012</span>
+                        <span class="process-name">unknown_process</span>
+                        <span class="process-cpu">89.2%</span>
+                        <span class="process-mem">34.1%</span>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Scan Target Modal -->
+        <div class="modal" id="scanModal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Configurar Scan</h2>
+                    <button class="modal-close" id="closeScanModal">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Alvo do Scan</label>
+                        <input type="text" id="scanTarget" placeholder="Caminho do diretório ou IP" value=".">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Scan</label>
+                        <select id="scanType">
+                            <option value="full">Scan Completo</option>
+                            <option value="code">Apenas Código</option>
+                            <option value="dependencies">Apenas Dependências</option>
+                            <option value="network">Apenas Rede</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Profundidade</label>
+                        <select id="scanDepth">
+                            <option value="shallow">Rápido</option>
+                            <option value="normal" selected>Normal</option>
+                            <option value="deep">Profundo</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="button button--secondary" id="cancelScanButton">Cancelar</button>
+                        <button class="button button--primary" id="confirmScanButton">Iniciar Scan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/security.js"></script>
+</body>
+</html>
