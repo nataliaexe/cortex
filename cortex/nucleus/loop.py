@@ -194,9 +194,26 @@ class CortexLoop:
             "liste", "leia", "crie", "edite", "rode", "execute", "analise",
             "gere", "abra", "mostre", "busque", "encontre", "procure",
             "delete", "apague", "remova", "mova", "copie", "renomeie",
-            "quais", "qual", "quando", "onde",
         ]
-        return any(v in t for v in action_verbs)
+        if any(v in t for v in action_verbs):
+            return True
+
+        # "quais/qual/quando/onde" sozinhos nao disparam planejamento.
+        # So disparam se combinados com agenda/tempo/arquivo.
+        question_kw = ["quais", "qual", "quando", "onde"]
+        if any(q in t for q in question_kw):
+            # se tem contexto concreto, planeja
+            context_kw = [
+                "evento", "eventos", "agenda", "calendario", "calendário",
+                "horario", "horário", "livre", "livres", "compromisso",
+                "timer", "lembrete", "nota", "notas",
+                "arquivo", "arquivos", "diretorio", "diretório",
+                "volume", "brilho", "clipboard",
+            ]
+            if any(k in t for k in context_kw):
+                return True
+
+        return False
 
     def _build_context(self, session_id: str, window: int = 20) -> str:
         msgs = self.memory.sessions.messages(session_id, limit=window)
@@ -348,9 +365,11 @@ class CortexLoop:
             "diga claramente que a tool nao rodou e por que. NAO invente o resultado.\n"
             "- Se uma tool executou com sucesso, use APENAS o output real dela. "
             "Nunca complete com suposicoes.\n"
-            "- Se o output de uma tool parece incompleto, siga a instrucao do sistema "
-            "no campo 'Plano executado'. O conteudo ali e o que voce tem. Nao reclame de "
-            "truncamento se nao houver indicacao explicita de 'linhas omitidas' ou 'truncado'.\n"
+            "- Se o output de uma tool foi mostrado no 'Plano executado', USE TUDO O QUE "
+            "ESTA LA. Nao diga 'foi omitido' ou 'truncado' a menos que apareca literalmente "
+            "'linhas omitidas' ou '... (truncado em N chars)'. Liste todos os itens.\n"
+            "- Ao listar arquivos ou resultados de tools, mostre a lista completa recebida. "
+            "Nao resuma nem omita itens por conta propria.\n"
             "- Nunca afirme que um arquivo esta vazio, que nao existe, ou que algo "
             "nao funciona, se voce nao confirmou isso com uma tool de verdade."
         )
