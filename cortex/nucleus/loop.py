@@ -83,6 +83,30 @@ class CortexLoop:
         self.splitter = IntentSplitter(router)
         self.bus = get_event_bus()
 
+
+    def _active_project(self, session_id: str) -> dict | None:
+        """Retorna o projeto ativo da sessao, ou None."""
+        try:
+            return self.memory.projects.project_for_session(session_id)
+        except Exception:
+            return None
+
+    async def _project_context(self, project_id: str, query: str, top_k: int = 3) -> str:
+        """Busca fontes relevantes do projeto para a query e formata como contexto."""
+        try:
+            hits = await self.memory.sources.search(project_id, query, top_k=top_k, min_score=0.35)
+        except Exception as e:
+            log.warning("project_context_search_failed", error=str(e))
+            return ""
+
+        if not hits:
+            return ""
+
+        lines = ["Fontes relevantes do projeto:"]
+        for h in hits:
+            lines.append(f"  - [{h['score']}] {h['kind']}: {h['title']} (ref: {h['ref'][:80]})")
+        return "\n".join(lines)
+
     # ---------- helpers ----------
 
     async def _emit(self, kind: str, session_id: str, payload: dict[str, Any], **extra: Any) -> Event:
@@ -219,6 +243,7 @@ class CortexLoop:
         auto_confirm: bool,
         is_subtask: bool = False,
         mode: str = "default",
+        project_id: str | None = None,
     ) -> SubTaskResult:
         """Roda uma unica intencao: classifica, planeja, executa, responde."""
         task = self._classify_task(objective)
@@ -295,6 +320,20 @@ class CortexLoop:
                     summary_lines.append(f"     -> {first_line}")
             system += "\n\nPlano executado (resumo):\n" + "\n".join(summary_lines)
 
+        # contexto do projeto: fontes relevantes injetadas no system
+        if project_id:
+            try:
+                proj = self.memory.projects.get(project_id)
+                if proj:
+                    system += f"\n\n[Projeto ativo: {proj['name']}]"
+                    if proj.get("description"):
+                        system += f"\nDescricao: {proj['description']}"
+                    proj_ctx = await self._project_context(project_id, objective, top_k=3)
+                    if proj_ctx:
+                        system += "\n" + proj_ctx
+            except Exception as e:
+                log.warning("project_context_inject_failed", error=str(e))
+
         msgs = self._messages_for_llm(session_id, system, objective)
 
         try:
@@ -348,6 +387,10 @@ class CortexLoop:
             )
             log.info("multi_intent_detected", n=len(split.tasks), tasks=split.tasks)
 
+        # 1.5. descobre projeto ativo da sessao
+        active_project = self._active_project(session_id)
+        project_id = active_project["id"] if active_project else None
+
         # 2. roda cada subtarefa em sequencia
         subtask_results: list[SubTaskResult] = []
         for i, obj in enumerate(split.tasks, 1):
@@ -363,6 +406,7 @@ class CortexLoop:
                 auto_confirm,
                 is_subtask=split.was_multi,
                 mode=mode,
+                project_id=project_id,
             )
             subtask_results.append(sub)
 
@@ -407,6 +451,7 @@ class CortexLoop:
             content=final_text[:500],
             tags=(split.tasks if split.was_multi else [self._classify_task(user_input)]),
             importance=0.5 if split.was_multi else 0.4,
+            project_id=project_id,
         )
 
         return TurnResult(

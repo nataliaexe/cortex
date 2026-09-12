@@ -24,14 +24,24 @@ class EpisodicMemory:
         content: str,
         tags: list[str] | None = None,
         importance: float = 0.5,
+        project_id: str | None = None,
     ) -> str:
         eid = str(uuid.uuid4())
         self.store.execute(
             """
-            INSERT INTO episodic (id, session_id, ts, summary, content, tags, importance)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO episodic (id, session_id, ts, summary, content, tags, importance, project_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            (eid, session_id, _utc_now(), summary, content, ",".join(tags or []), importance),
+            (
+                eid,
+                session_id,
+                _utc_now(),
+                summary,
+                content,
+                ",".join(tags or []),
+                importance,
+                project_id,
+            ),
         )
         return eid
 
