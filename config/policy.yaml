@@ -1,0 +1,82 @@
+version: 1
+default: deny
+
+rules:
+  # ---------- leitura ----------
+  # Toda leitura dentro das raizes permitidas e livre.
+  - name: read_inside_allowed_roots
+    match:
+      tool: [files.read, files.list]
+      path_prefix: /home/nana/cortex
+    action: allow
+
+  - name: read_inside_home_projetos
+    match:
+      tool: [files.read, files.list]
+      path_prefix: /home/nana/projetos
+    action: allow
+
+  - name: read_inside_documentos
+    match:
+      tool: [files.read, files.list]
+      path_prefix: /home/nana/Documentos
+    action: allow
+
+  - name: read_inside_sandbox
+    match:
+      tool: [files.read, files.list]
+      path_prefix: /tmp/cortex-sandbox
+    action: allow
+
+  # ---------- escrita ----------
+  # Escrita exige dry-run por padrao.
+  - name: write_requires_dry_run
+    match:
+      tool: files.write
+    action: dry_run
+
+  - name: delete_requires_dry_run
+    match:
+      tool: files.delete
+    action: dry_run
+
+  # ---------- shell ----------
+  # Comandos da allowlist passam direto.
+  - name: shell_allowlist
+    match:
+      tool: shell.run
+    when:
+      argv0_in:
+        - ls
+        - cat
+        - grep
+        - rg
+        - fd
+        - find
+        - git
+        - python
+        - python3
+        - pytest
+        - ruff
+    action: allow
+
+  # Comandos destrutivos sao sempre negados.
+  - name: shell_destructive_deny
+    match:
+      tool: shell.run
+    when:
+      argv_contains_any:
+        - "rm -rf /"
+        - "rm -rf ~"
+        - "dd if="
+        - "mkfs"
+        - ":(){:|:&};:"
+        - "> /dev/sda"
+        - "chmod -R 777 /"
+    action: deny
+
+  # Qualquer outro shell.run: dry-run.
+  - name: shell_unknown_dry_run
+    match:
+      tool: shell.run
+    action: dry_run

@@ -1,0 +1,151 @@
+app:
+  name: cortex
+  version: 0.1.0
+  log_level: info
+  log_file: logs/cortex.log
+
+database:
+  path: data/cortex.db
+  vectors_path: data/vectors
+
+models:
+  local:
+    provider: ollama
+    host: http://127.0.0.1:11434
+    model: qwen2.5-coder:7b
+    embed_model: nomic-embed-text
+    timeout_seconds: 45
+
+providers:
+  groq:
+    enabled: true
+    kind: openai_compatible
+    base_url: https://api.groq.com/openai/v1
+    api_key_env: GROQ_API_KEY
+<<<<<<< HEAD
+    default_model: openai/gpt-oss-120b
+    models:
+      - openai/gpt-oss-120b
+      - openai/gpt-oss-20b
+=======
+    default_model: qwen/qwen3.8-27b
+    models:
+>>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
+      - qwen/qwen3.8-27b
+      - qwen/qwen3.6-27b
+      - groq/compound
+      - groq/compound-mini
+<<<<<<< HEAD
+=======
+      - openai/gpt-oss-20b
+      - openai/gpt-oss-120b
+>>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
+    timeout_seconds: 60
+    free: true
+    rate_limit_rpm: 30
+
+  gemini:
+    enabled: true
+    kind: openai_compatible
+    base_url: https://generativelanguage.googleapis.com/v1beta/openai
+    api_key_env: GEMINI_API_KEY
+    default_model: gemini-flash-latest
+    models:
+      - gemini-flash-latest
+      - gemini-pro-latest
+      - gemini-3.8-flash
+      - gemini-3.7-flash
+      - gemini-3.5-flash
+<<<<<<< HEAD
+      - gemini-3.1-pro-preview
+=======
+>>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
+    timeout_seconds: 90
+    free: true
+
+  openrouter:
+    enabled: true
+    kind: openai_compatible
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+    default_model: deepseek/deepseek-chat
+    models:
+      - deepseek/deepseek-chat
+      - meta-llama/llama-3.3-70b-instruct:free
+      - qwen/qwen-2.5-coder-32b-instruct:free
+      - google/gemini-flash-1.5:free
+    timeout_seconds: 90
+    free: true
+    extra_headers:
+      HTTP-Referer: http://localhost
+      X-Title: Cortex
+
+  deepseek:
+    enabled: false
+    kind: openai_compatible
+    base_url: https://api.deepseek.com
+    api_key_env: DEEPSEEK_API_KEY
+    default_model: deepseek-chat
+    models:
+      - deepseek-chat
+      - deepseek-reasoner
+    timeout_seconds: 120
+    free: false
+    cost_input_per_mtok: 0.27
+    cost_output_per_mtok: 1.10
+
+  openai:
+    enabled: false
+    kind: openai_compatible
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    default_model: gpt-4o-mini
+    models:
+      - gpt-4o-mini
+      - gpt-4o
+    timeout_seconds: 120
+    free: false
+    cost_input_per_mtok: 2.50
+    cost_output_per_mtok: 10.00
+
+memory:
+  working_window_messages: 20
+  episodic_retention_days: 365
+  semantic_min_score: 0.35
+
+governance:
+  default_action: deny
+  dry_run_required:
+    - files.write
+    - files.delete
+    - shell.run
+    - system.shutdown
+    - system.reboot
+
+tools:
+  files:
+    allowed_roots:
+      - /home/nana/cortex
+      - /home/nana/projetos
+      - /home/nana/Documentos
+      - /tmp/cortex-sandbox
+    max_read_bytes: 2000000
+  shell:
+    allowlist_argv0:
+      - ls
+      - cat
+      - grep
+      - rg
+      - fd
+      - find
+      - git
+      - curl
+      - wget
+      - nmap
+      - python
+      - python3
+      - pip
+      - pytest
+      - ruff
+    forbid_shell_meta: true
+    timeout_seconds: 60

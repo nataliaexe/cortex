@@ -1,0 +1,157 @@
+# Cadeia de preferencia por tarefa.
+<<<<<<< HEAD
+# O roteador tenta na ordem; se falhar (sem chave, sem credito, rate limit,
+# timeout, erro 5xx), pula para o proximo. Se todos falharem, usa local.
+
+tasks:
+  chat:
+    - groq
+    - gemini
+=======
+
+tasks:
+  chat:
+    - gemini
+    - groq
+>>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
+    - openrouter
+    - local
+
+  memory_lookup:
+    - local
+    - groq
+
+  classification:
+    - local
+<<<<<<< HEAD
+    - groq
+
+  tool_selection:
+=======
+    - gemini
+    - groq
+
+  tool_selection:
+    - gemini
+>>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
+    - groq
+    - local
+
+  short_summary:
+<<<<<<< HEAD
+    - groq
+    - gemini
+=======
+    - gemini
+    - groq
+>>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
+    - local
+
+  code_generation:
+    - deepseek
+    - groq
+    - openrouter
+    - local
+
+  code_refactor:
+    - deepseek
+    - groq
+    - openrouter
+    - local
+
+  code_review:
+    - gemini
+    - openrouter
+    - groq
+
+  security_analysis:
+    - deepseek
+    - groq
+    - gemini
+    - local
+
+  long_reasoning:
+    - deepseek
+    - groq
+    - gemini
+    - openrouter
+
+  planning:
+    - deepseek
+    - groq
+<<<<<<< HEAD
+    - gemini
+    - openrouter
+=======
+    - openrouter
+    - gemini
+>>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
+
+  project_organization:
+    - gemini
+    - openrouter
+    - groq
+
+# Override por modelo especifico quando a tarefa pedir
+model_overrides:
+  deepseek:
+    long_reasoning: deepseek-reasoner
+    planning: deepseek-reasoner
+  groq:
+    code_generation: qwen/qwen3.8-27b
+    code_refactor: qwen/qwen3.8-27b
+<<<<<<< HEAD
+    long_reasoning: openai/gpt-oss-120b
+    planning: openai/gpt-oss-120b
+  gemini:
+    code_review: gemini-pro-latest
+    long_reasoning: gemini-pro-latest
+    planning: gemini-pro-latest
+
+# Privacidade: se o payload casar com algum padrao, forca local.
+# IMPORTANTE: padroes devem ser conservadores. Falso positivo = lentidao extrema
+# (forca Ollama local em CPU). Falso negativo = vazamento. Balancear com cuidado.
+privacy:
+  # Nomes de arquivo que NUNCA devem aparecer em conteudo enviado remoto.
+  # Checagem so quando o caminho aparece junto com conteudo (nao so na lista).
+=======
+    long_reasoning: qwen/qwen3.8-27b
+    planning: qwen/qwen3.8-27b
+
+# Privacidade
+privacy:
+>>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
+  never_send_patterns:
+    - "/etc/shadow"
+    - "id_rsa"
+    - "id_ed25519"
+    - ".kdbx"
+    - ".p12"
+    - ".pfx"
+  never_send_regex:
+<<<<<<< HEAD
+    # chaves por formato (nao por contexto) - formato e o que importa
+    - "sk-[A-Za-z0-9]{20,}"                            # openai, deepseek
+    - "sk-or-v1-[A-Za-z0-9]{20,}"                      # openrouter
+    - "gsk_[A-Za-z0-9]{20,}"                           # groq
+    - "AQ\\.[A-Za-z0-9_-]{30,}"                        # gemini
+    - "AIza[A-Za-z0-9_-]{30,}"                         # google api key classica
+    - "xox[baprs]-[A-Za-z0-9-]{10,}"                   # slack
+    - "ghp_[A-Za-z0-9]{30,}"                           # github pat
+    - "AKIA[A-Z0-9]{16}"                               # aws access key
+    # linhas de .env que contenham KEY=valores_parecidos_com_secret
+    - "(?m)^[A-Z][A-Z0-9_]{2,}\\s*=\\s*[A-Za-z0-9_\\-]{20,}$"
+    # contexto explicito de segredo
+=======
+    - "sk-[A-Za-z0-9]{20,}"
+    - "sk-or-v1-[A-Za-z0-9]{20,}"
+    - "gsk_[A-Za-z0-9]{20,}"
+    - "AQ\\.[A-Za-z0-9_-]{30,}"
+    - "AIza[A-Za-z0-9_-]{30,}"
+    - "xox[baprs]-[A-Za-z0-9-]{10,}"
+    - "ghp_[A-Za-z0-9]{30,}"
+    - "AKIA[A-Z0-9]{16}"
+    - "(?m)^[A-Z][A-Z0-9_]{2,}\\s*=\\s*[A-Za-z0-9_\\-]{20,}$"
+>>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
+    - "(?i)password\\s*[:=]\\s*\\S+"
+    - "(?i)secret\\s*[:=]\\s*[A-Za-z0-9_\\-]{16,}"

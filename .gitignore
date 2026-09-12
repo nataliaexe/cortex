@@ -1,0 +1,94 @@
+<<<<<<< HEAD
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+build/
+dist/
+.env
+data/*.db
+data/*.db-*
+data/vectors/
+logs/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+web/node_modules/
+web/dist/
+
+# Node (nao pertence ao nucleo Python)
+node_modules/
+package.json
+package-lock.json
+yarn.lock
+=======
+# ---- Python ----
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+build/
+dist/
+*.egg
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# ---- Ambiente / segredos ----
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+
+# ---- Cortex data (nunca versionar) ----
+data/*.db
+data/*.db-*
+data/*.sqlite
+data/*.sqlite-*
+data/vectors/
+data/.repl_history
+logs/
+*.log
+
+# ---- Node / web ----
+node_modules/
+web/node_modules/
+web/dist/
+web/.vite/
+web/.turbo/
+package-lock.json.bak
+yarn.lock.bak
+
+# ---- Editores ----
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# ---- Sistema operacional ----
+.DS_Store
+Thumbs.db
+
+# ---- Build artifacts ----
+*.tar.gz
+*.zip
+*.whl
+
+# ---- Backups locais ----
+backups/
+*.bak
+*.bak.meta
+>>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
