@@ -61,6 +61,12 @@ tasks:
     - openrouter
     - gemini
 
+  research:
+    - deepseek
+    - gemini
+    - groq
+    - openrouter
+
   project_organization:
     - gemini
     - openrouter

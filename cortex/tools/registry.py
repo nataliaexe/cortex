@@ -78,6 +78,37 @@ def register_defaults() -> ToolRegistry:
         DeleteFileTool,
     )
     from cortex.tools.shell import ShellRunTool
+    from cortex.tools.system import (
+        BrightnessTool,
+        ClipboardTool,
+        NotifyTool,
+        OpenTool,
+        ScreenshotTool,
+        VolumeTool,
+    )
+    from cortex.tools.research import (
+        ResearchDeepTool,
+        ResearchFetchTool,
+        ResearchWebTool,
+    )
+    from cortex.tools.calendar import (
+        CalendarAddTool,
+        CalendarDeleteTool,
+        CalendarFreeTool,
+        CalendarListTool,
+    )
+    from cortex.tools.time import (
+        NoteAddTool,
+        NoteDeleteTool,
+        NoteListTool,
+        NoteSearchTool,
+        ReminderCancelTool,
+        ReminderListTool,
+        ReminderSetTool,
+        TimerCancelTool,
+        TimerListTool,
+        TimerSetTool,
+    )
 
     builtin = [
         ListFilesTool(),
@@ -85,6 +116,29 @@ def register_defaults() -> ToolRegistry:
         WriteFileTool(),
         DeleteFileTool(),
         ShellRunTool(),
+        VolumeTool(),
+        BrightnessTool(),
+        NotifyTool(),
+        OpenTool(),
+        ClipboardTool(),
+        ScreenshotTool(),
+        TimerSetTool(),
+        TimerListTool(),
+        TimerCancelTool(),
+        ReminderSetTool(),
+        ReminderListTool(),
+        ReminderCancelTool(),
+        NoteAddTool(),
+        NoteListTool(),
+        NoteSearchTool(),
+        NoteDeleteTool(),
+        CalendarAddTool(),
+        CalendarListTool(),
+        CalendarFreeTool(),
+        CalendarDeleteTool(),
+        ResearchWebTool(),
+        ResearchFetchTool(),
+        ResearchDeepTool(),
     ]
     for t in builtin:
         if t.name not in reg._tools:

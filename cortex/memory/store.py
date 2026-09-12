@@ -134,6 +134,57 @@ CREATE TABLE IF NOT EXISTS project_sessions (
 );
 CREATE INDEX IF NOT EXISTS idx_proj_sessions ON project_sessions(project_id);
 
+CREATE TABLE IF NOT EXISTS timers (
+    id TEXT PRIMARY KEY,
+    label TEXT,
+    fire_at TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    fired INTEGER DEFAULT 0,
+    cancelled INTEGER DEFAULT 0,
+    project_id TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_timers_fire ON timers(fire_at, fired, cancelled);
+
+CREATE TABLE IF NOT EXISTS reminders (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT,
+    fire_at TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    fired INTEGER DEFAULT 0,
+    cancelled INTEGER DEFAULT 0,
+    project_id TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_reminders_fire ON reminders(fire_at, fired, cancelled);
+
+CREATE TABLE IF NOT EXISTS notes (
+    id TEXT PRIMARY KEY,
+    title TEXT,
+    content TEXT NOT NULL,
+    tags TEXT,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    project_id TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_notes_project ON notes(project_id, updated_at DESC);
+
+CREATE TABLE IF NOT EXISTS calendar_events (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT,
+    location TEXT,
+    start_at TEXT NOT NULL,
+    end_at TEXT NOT NULL,
+    all_day INTEGER DEFAULT 0,
+    source TEXT DEFAULT 'local',
+    external_id TEXT,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    project_id TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_calendar_start ON calendar_events(start_at);
+CREATE INDEX IF NOT EXISTS idx_calendar_external ON calendar_events(source, external_id);
+
 CREATE TABLE IF NOT EXISTS usage (
     id TEXT PRIMARY KEY,
     ts TEXT NOT NULL,

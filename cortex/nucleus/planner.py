@@ -63,6 +63,9 @@ Regras:
 - Os argumentos de "args" DEVEM seguir o schema da ferramenta escolhida.
 - Se a ferramenta precisar de um argumento obrigatorio e voce nao tem o valor,
   NAO escolha essa ferramenta. Prefira tool=null e descreva em texto.
+- Pesquisa: use research.web para perguntas factuais diretas ("o que e X", "quem foi Y").
+  Use research.deep APENAS quando o usuario pedir "pesquisa aprofundada", "revisao",
+  "estudo sobre", ou quando o tema for amplo e exigir multiplas fontes.
 - Se o passo for apenas raciocinio ou resposta final, tool = null, args = {{}}.
 - Responda SEMPRE em JSON valido, sem texto fora do JSON.
 

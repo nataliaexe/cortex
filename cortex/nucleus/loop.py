@@ -34,7 +34,7 @@ from cortex.utils.logging import get_logger
 
 log = get_logger(__name__)
 
-PLANNING_TASKS = {"code_generation", "code_refactor", "security_analysis", "planning"}
+PLANNING_TASKS = {"code_generation", "code_refactor", "security_analysis", "planning", "research"}
 
 
 @dataclass(slots=True)
@@ -121,6 +121,40 @@ class CortexLoop:
         code_kw = ["codigo", "código", "função", "funcao", "refator", "implemente", "corrija", "bug", "teste"]
         plan_kw = ["planeje", "plano", "passo a passo", "etapas", "estrategia"]
 
+        # calendario / tempo / organizacao
+        agenda_kw = [
+            "agenda", "calendario", "calendário", "evento", "eventos",
+            "compromisso", "compromissos", "reuniao", "reunião", "reuniões", "reunioes",
+            "horario", "horário", "horarios", "horários", "livre", "livres",
+            "marcar", "agendar", "agendado", "agendada",
+            "timer", "lembrete", "lembretes", "lembrar",
+            "nota", "notas", "anotar",
+        ]
+        if any(k in t for k in agenda_kw):
+            return "tool_selection"
+
+        # pesquisa web
+        research_kw = [
+            "pesquise", "pesquisa", "pesquisar", "busque", "buscar",
+            "procure", "procurar", "investigue", "investigar",
+            "o que é", "o que e", "quem é", "quem e",
+            "como funciona", "procura sobre", "me explica",
+            "referencias", "referências", "fontes sobre",
+        ]
+        if any(k in t for k in research_kw):
+            return "research"
+
+        # sistema (volume, brilho, abrir, etc)
+        system_kw = [
+            "volume", "brilho", "som", "mudo", "mutar",
+            "notifica", "notificação", "notificacao",
+            "clipboard", "área de transferência", "area de transferencia",
+            "screenshot", "print", "captura de tela",
+            "abrir", "abre", "abrir site", "abrir url",
+        ]
+        if any(k in t for k in system_kw):
+            return "tool_selection"
+
         if any(k in t for k in sec_kw):
             return "security_analysis"
         if any(k in t for k in code_kw):
@@ -134,16 +168,33 @@ class CortexLoop:
     def _should_plan(self, text: str, task: str) -> bool:
         if task in PLANNING_TASKS:
             return True
+
+        # tool_selection sempre planeja (precisa decidir qual tool usar)
+        if task == "tool_selection":
+            return True
+
         t = text.lower()
         import re as _re
         if _re.search(r"(/|~)\S+", text):
             return True
         if _re.search(r"\b\w+\.(py|txt|md|json|yaml|yml|sh|js|ts|html|css|db|csv)\b", t):
             return True
+
+        # perguntas sobre agenda/eventos/timers/notas: planejar
+        agenda_kw = [
+            "agenda", "calendario", "calendário", "evento", "eventos",
+            "compromisso", "compromissos", "reuniao", "reunião",
+            "horario", "horário", "livre", "livres",
+            "timer", "lembrete", "lembretes", "nota", "notas",
+        ]
+        if any(k in t for k in agenda_kw):
+            return True
+
         action_verbs = [
             "liste", "leia", "crie", "edite", "rode", "execute", "analise",
             "gere", "abra", "mostre", "busque", "encontre", "procure",
             "delete", "apague", "remova", "mova", "copie", "renomeie",
+            "quais", "qual", "quando", "onde",
         ]
         return any(v in t for v in action_verbs)
 
@@ -297,8 +348,9 @@ class CortexLoop:
             "diga claramente que a tool nao rodou e por que. NAO invente o resultado.\n"
             "- Se uma tool executou com sucesso, use APENAS o output real dela. "
             "Nunca complete com suposicoes.\n"
-            "- Se o output de uma tool parece truncado, diga que esta truncado em vez de "
-            "inventar o que vem depois.\n"
+            "- Se o output de uma tool parece incompleto, siga a instrucao do sistema "
+            "no campo 'Plano executado'. O conteudo ali e o que voce tem. Nao reclame de "
+            "truncamento se nao houver indicacao explicita de 'linhas omitidas' ou 'truncado'.\n"
             "- Nunca afirme que um arquivo esta vazio, que nao existe, ou que algo "
             "nao funciona, se voce nao confirmou isso com uma tool de verdade."
         )
@@ -308,17 +360,21 @@ class CortexLoop:
                 "Responda apenas esta parte, de forma concisa."
             )
         if plan is not None:
-            # em vez de jogar o plano inteiro (que inclui resultados de tool com nomes
-            # de arquivo sensiveis), resume so o que foi executado
+            # resumo do plano com o resultado das tools (ate 10 linhas por step)
             summary_lines = []
             for i, s in enumerate(plan.steps, 1):
                 status = "ok" if s.done else "pendente"
                 summary_lines.append(f"  {i}. {s.description} [{status}]")
                 if s.tool and s.result:
-                    # so a primeira linha do resultado, para dar contexto ao LLM
-                    first_line = s.result.strip().splitlines()[0][:200] if s.result.strip() else ""
-                    summary_lines.append(f"     -> {first_line}")
-            system += "\n\nPlano executado (resumo):\n" + "\n".join(summary_lines)
+                    lines = s.result.strip().splitlines()
+                    # primeiras 10 linhas, cada uma cortada em 300 chars
+                    preview = "\n".join(
+                        "     -> " + line[:300] for line in lines[:10]
+                    )
+                    if len(lines) > 10:
+                        preview += f"\n     -> ... ({len(lines) - 10} linhas omitidas)"
+                    summary_lines.append(preview)
+            system += "\n\nPlano executado (com resultados):\n" + "\n".join(summary_lines)
 
         # contexto do projeto: fontes relevantes injetadas no system
         if project_id:

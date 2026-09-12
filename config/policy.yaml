@@ -76,6 +76,102 @@ rules:
     action: deny
 
   # Qualquer outro shell.run: dry-run.
+  # ---------- sistema (nao destrutivas) ----------
+  - name: system_volume_ok
+    match: {tool: system.volume}
+    action: allow
+
+  - name: system_brightness_ok
+    match: {tool: system.brightness}
+    action: allow
+
+  - name: system_notify_ok
+    match: {tool: system.notify}
+    action: allow
+
+  - name: system_open_ok
+    match: {tool: system.open}
+    action: allow
+
+  - name: system_clipboard_ok
+    match: {tool: system.clipboard}
+    action: allow
+
+  - name: system_screenshot_ok
+    match: {tool: system.screenshot}
+    action: allow
+
+  # ---------- tempo e notas ----------
+  - name: timer_set_ok
+    match: {tool: timer.set}
+    action: allow
+
+  - name: timer_list_ok
+    match: {tool: timer.list}
+    action: allow
+
+  - name: timer_cancel_ok
+    match: {tool: timer.cancel}
+    action: allow
+
+  - name: reminder_set_ok
+    match: {tool: reminder.set}
+    action: allow
+
+  - name: reminder_list_ok
+    match: {tool: reminder.list}
+    action: allow
+
+  - name: reminder_cancel_ok
+    match: {tool: reminder.cancel}
+    action: allow
+
+  - name: note_add_ok
+    match: {tool: note.add}
+    action: allow
+
+  - name: note_list_ok
+    match: {tool: note.list}
+    action: allow
+
+  - name: note_search_ok
+    match: {tool: note.search}
+    action: allow
+
+  - name: note_delete_dry_run
+    match: {tool: note.delete}
+    action: dry_run
+
+  # ---------- calendario ----------
+  - name: calendar_add_ok
+    match: {tool: calendar.add}
+    action: allow
+
+  - name: calendar_list_ok
+    match: {tool: calendar.list}
+    action: allow
+
+  - name: calendar_free_ok
+    match: {tool: calendar.free}
+    action: allow
+
+  - name: calendar_delete_dry_run
+    match: {tool: calendar.delete}
+    action: dry_run
+
+  # ---------- pesquisa ----------
+  - name: research_web_ok
+    match: {tool: research.web}
+    action: allow
+
+  - name: research_fetch_ok
+    match: {tool: research.fetch}
+    action: allow
+
+  - name: research_deep_ok
+    match: {tool: research.deep}
+    action: allow
+
   - name: shell_unknown_dry_run
     match:
       tool: shell.run

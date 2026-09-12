@@ -92,3 +92,7 @@ backups/
 *.bak
 *.bak.meta
 >>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
+
+# Google credentials
+data/google_credentials.json
+data/google_token.json
