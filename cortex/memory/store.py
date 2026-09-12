@@ -56,17 +56,19 @@ CREATE TABLE IF NOT EXISTS episodic (
     summary TEXT NOT NULL,
     content TEXT NOT NULL,
     tags TEXT,
-    importance REAL DEFAULT 0.5
+    importance REAL DEFAULT 0.5,
+    project_id TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_episodic_ts ON episodic(ts DESC);
 
 CREATE TABLE IF NOT EXISTS semantic (
     id TEXT PRIMARY KEY,
-    key TEXT NOT NULL UNIQUE,
+    key TEXT NOT NULL,
     value TEXT NOT NULL,
     source TEXT,
     confidence REAL DEFAULT 0.7,
-    updated_at TEXT NOT NULL
+    updated_at TEXT NOT NULL,
+    project_id TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_semantic_key ON semantic(key);
 
@@ -84,7 +86,8 @@ CREATE TABLE IF NOT EXISTS audit (
     decision TEXT NOT NULL,
     reason TEXT,
     result TEXT,
-    session_id TEXT
+    session_id TEXT,
+    project_id TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_audit_ts ON audit(ts DESC);
 CREATE INDEX IF NOT EXISTS idx_audit_tool ON audit(tool);
@@ -99,6 +102,37 @@ CREATE TABLE IF NOT EXISTS embeddings (
     created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_embeddings_ref ON embeddings(ref_kind, ref_id);
+
+CREATE TABLE IF NOT EXISTS projects (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    description TEXT,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    metadata TEXT
+);
+
+CREATE TABLE IF NOT EXISTS project_sources (
+    id TEXT PRIMARY KEY,
+    project_id TEXT NOT NULL,
+    kind TEXT NOT NULL,
+    ref TEXT NOT NULL,
+    title TEXT,
+    summary TEXT,
+    content TEXT,
+    indexed_at TEXT NOT NULL,
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_sources_project ON project_sources(project_id);
+CREATE INDEX IF NOT EXISTS idx_sources_kind ON project_sources(kind);
+
+CREATE TABLE IF NOT EXISTS project_sessions (
+    session_id TEXT PRIMARY KEY,
+    project_id TEXT NOT NULL,
+    linked_at TEXT NOT NULL,
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_proj_sessions ON project_sessions(project_id);
 
 CREATE TABLE IF NOT EXISTS usage (
     id TEXT PRIMARY KEY,

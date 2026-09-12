@@ -22,24 +22,14 @@ providers:
     kind: openai_compatible
     base_url: https://api.groq.com/openai/v1
     api_key_env: GROQ_API_KEY
-<<<<<<< HEAD
-    default_model: openai/gpt-oss-120b
-    models:
-      - openai/gpt-oss-120b
-      - openai/gpt-oss-20b
-=======
     default_model: qwen/qwen3.8-27b
     models:
->>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
       - qwen/qwen3.8-27b
       - qwen/qwen3.6-27b
       - groq/compound
       - groq/compound-mini
-<<<<<<< HEAD
-=======
       - openai/gpt-oss-20b
       - openai/gpt-oss-120b
->>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
     timeout_seconds: 60
     free: true
     rate_limit_rpm: 30
@@ -56,10 +46,6 @@ providers:
       - gemini-3.8-flash
       - gemini-3.7-flash
       - gemini-3.5-flash
-<<<<<<< HEAD
-      - gemini-3.1-pro-preview
-=======
->>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
     timeout_seconds: 90
     free: true
 

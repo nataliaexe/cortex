@@ -32,11 +32,8 @@ HELP_TEXT = """\
   :audit [n]     ultimas n entradas de auditoria
   :memory        mostra working memory atual
   :auto on|off   liga/desliga auto-confirm de dry-runs
-<<<<<<< HEAD
-=======
   :mode          lista modos de interacao
   :mode <nome>   muda o modo (default, english)
->>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
 
 [bold]Uso normal:[/bold]
   digite sua mensagem e Enter. Ctrl+C cancela. Ctrl+D sai.
@@ -102,8 +99,6 @@ async def _handle_meta_command(line: str, state: dict[str, Any], loop: CortexLoo
         console.print_json(data=w)
         return True
 
-<<<<<<< HEAD
-=======
     if cmd == ":mode":
         if len(parts) > 1:
             from cortex.nucleus.modes import MODES
@@ -120,7 +115,6 @@ async def _handle_meta_command(line: str, state: dict[str, Any], loop: CortexLoo
                 console.print(f"  [cyan]{name}[/cyan] - {m.description}")
         return True
 
->>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
     if cmd == ":auto":
         if len(parts) > 1:
             state["auto_confirm"] = parts[1].lower() == "on"
@@ -140,11 +134,7 @@ async def run_repl(loop: CortexLoop) -> None:
     session: PromptSession = PromptSession(history=FileHistory(history_path), style=REPL_STYLE)
 
     sid = loop.memory.sessions.create(title="repl")
-<<<<<<< HEAD
-    state: dict[str, Any] = {"session_id": sid, "auto_confirm": False}
-=======
     state: dict[str, Any] = {"session_id": sid, "auto_confirm": False, "mode": "default"}
->>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
 
     _print_banner()
     console.print(f"[dim]sessao:[/dim] [cyan]{sid[:8]}[/cyan]\n")
@@ -180,10 +170,7 @@ async def run_repl(loop: CortexLoop) -> None:
                 state["session_id"],
                 line,
                 auto_confirm=state["auto_confirm"],
-<<<<<<< HEAD
-=======
                 mode=state.get("mode", "default"),
->>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
             )
         except KeyboardInterrupt:
             console.print("\n[yellow]turno cancelado pelo usuario[/yellow]")

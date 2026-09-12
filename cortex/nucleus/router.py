@@ -20,10 +20,7 @@ from cortex.config import CortexConfig, RouterConfig, load_router_config
 from cortex.models.local import ChatMessage
 from cortex.models.registry import ModelRegistry
 from cortex.models.remote import RemoteAuthError, RemoteRateLimitError
-<<<<<<< HEAD
-=======
 from cortex.nucleus.rate_tracker import get_rate_tracker
->>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
 from cortex.utils.logging import get_logger
 
 log = get_logger(__name__)
@@ -99,10 +96,7 @@ class Router:
         self.registry = registry
         self.router_cfg = router_cfg or load_router_config()
         self.privacy = PrivacyGuard(self.router_cfg)
-<<<<<<< HEAD
-=======
         self.rate_tracker = get_rate_tracker()
->>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
 
     def chain_for(self, task: str) -> list[str]:
         """Retorna a cadeia de providers para uma tarefa."""
@@ -157,8 +151,6 @@ class Router:
             chain = [p for p in chain if p != "local"] or ["local"]
 
         for provider in chain:
-<<<<<<< HEAD
-=======
             # pula provider em cooldown de rate limit recente
             if provider != "local" and self.rate_tracker.is_in_cooldown(provider):
                 rem = self.rate_tracker.remaining(provider)
@@ -173,7 +165,6 @@ class Router:
                 )
                 continue
 
->>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
             model_name = self.model_for(provider, task)
 
             # se provider desabilitado/sem chave, pula rapido
@@ -215,10 +206,7 @@ class Router:
                     RouteAttempt(provider=provider, model=model_name or "?", ok=False, error=f"rate limit: {e}", latency_ms=latency)
                 )
                 log.warning("route_rate_limit", provider=provider, task=task)
-<<<<<<< HEAD
-=======
                 self.rate_tracker.mark_cooldown(provider)
->>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
                 continue
             except RemoteAuthError as e:
                 attempts.append(

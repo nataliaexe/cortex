@@ -24,10 +24,7 @@ from cortex.models.local import ChatMessage
 from cortex.models.registry import ModelRegistry
 from cortex.nucleus.critic import Critic
 from cortex.nucleus.intent_splitter import IntentSplitter, SplitResult
-<<<<<<< HEAD
-=======
 from cortex.nucleus.modes import get_mode
->>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
 from cortex.nucleus.planner import Plan, Planner
 from cortex.nucleus.router import AllProvidersFailed, Router
 from cortex.tools.base import ToolContext, ToolResult
@@ -221,10 +218,7 @@ class CortexLoop:
         objective: str,
         auto_confirm: bool,
         is_subtask: bool = False,
-<<<<<<< HEAD
-=======
         mode: str = "default",
->>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
     ) -> SubTaskResult:
         """Roda uma unica intencao: classifica, planeja, executa, responde."""
         task = self._classify_task(objective)
@@ -269,20 +263,11 @@ class CortexLoop:
                         {"last_tool": step.tool, "last_ok": result.ok},
                     )
 
-<<<<<<< HEAD
-        # monta system e mensagens para a resposta final
-        system = (
-            "Voce e o Cortex, assistente pessoal de Nana. "
-            "Responda em portugues do Brasil. Sem emoji. Seja direto e util. "
-            "Se faltar informacao, pergunte em vez de inventar.\n\n"
-            "REGRAS CRITICAS SOBRE TOOLS:\n"
-=======
         # monta system baseado no modo ativo
         active_mode = get_mode(mode)
         system = active_mode.system_prompt
         system += (
             "\n\nREGRAS CRITICAS SOBRE TOOLS:\n"
->>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
             "- Se uma tool nao executou (dry-run pendente, negada, ou falhou), "
             "diga claramente que a tool nao rodou e por que. NAO invente o resultado.\n"
             "- Se uma tool executou com sucesso, use APENAS o output real dela. "
@@ -343,14 +328,9 @@ class CortexLoop:
         session_id: str,
         user_input: str,
         auto_confirm: bool = False,
-<<<<<<< HEAD
-    ) -> TurnResult:
-        await self._emit("perception", session_id, {"text": user_input})
-=======
         mode: str = "default",
     ) -> TurnResult:
         await self._emit("perception", session_id, {"text": user_input, "mode": mode})
->>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
         self.memory.sessions.add_message(session_id, "user", user_input)
 
         # 1. detecta multi-intent
@@ -382,10 +362,7 @@ class CortexLoop:
                 obj,
                 auto_confirm,
                 is_subtask=split.was_multi,
-<<<<<<< HEAD
-=======
                 mode=mode,
->>>>>>> 23a25f8 (semana 1 fechada: multi-provider + tools + governanca + multi-intent + modes + rate tracker)
             )
             subtask_results.append(sub)
 
