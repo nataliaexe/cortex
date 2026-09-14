@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-bg-base text-fg-base;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2a2a2a;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3a3a3a;
+  }
+
+  ::selection {
+    background: #7c3aed55;
+  }
+
+  :focus-visible {
+    outline: 1px solid #7c3aed;
+    outline-offset: 1px;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors;
+  }
+  .btn-primary {
+    @apply btn bg-accent text-white hover:bg-accent-hover;
+  }
+  .btn-ghost {
+    @apply btn text-fg-muted hover:bg-bg-hover hover:text-fg-base;
+  }
+  .btn-outline {
+    @apply btn border border-bg-border text-fg-base hover:bg-bg-hover;
+  }
+
+  .input {
+    @apply w-full rounded-md border border-bg-border bg-bg-elevated px-3 py-1.5 text-sm text-fg-base placeholder:text-fg-dim focus:border-accent focus:outline-none;
+  }
+
+  .panel {
+    @apply rounded-md border border-bg-border bg-bg-panel;
+  }
+  .panel-elevated {
+    @apply rounded-md border border-bg-border bg-bg-elevated;
+  }
+
+  .divider-h {
+    @apply h-px bg-bg-border;
+  }
+  .divider-v {
+    @apply w-px bg-bg-border;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded px-1.5 py-0.5 text-2xs font-medium;
+  }
+  .badge-success { @apply badge bg-state-success/15 text-state-success; }
+  .badge-warning { @apply badge bg-state-warning/15 text-state-warning; }
+  .badge-danger  { @apply badge bg-state-danger/15 text-state-danger; }
+  .badge-info    { @apply badge bg-state-info/15 text-state-info; }
+  .badge-muted   { @apply badge bg-bg-hover text-fg-muted; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 150ms ease-out;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.animate-pulse-dot {
+  animation: pulse-dot 1.4s ease-in-out infinite;
+}
+
+/* esconde scrollbar mas mantem scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
